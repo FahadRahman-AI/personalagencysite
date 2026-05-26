@@ -28,7 +28,7 @@ export default function SectionFour({
 
   useEffect(() => {
     if (isActive) {
-      const t = setTimeout(() => setAnimated(true), 40);
+      const t = setTimeout(() => setAnimated(true), 80);
       return () => clearTimeout(t);
     }
     setAnimated(false);
@@ -98,7 +98,7 @@ export default function SectionFour({
         height: "100%",
         position: "relative",
         overflow: "hidden",
-        transition: "opacity 0.6s cubic-bezier(0.76, 0, 0.24, 1)",
+        transition: "opacity var(--section-entry-duration-medium) var(--section-entry-ease)",
       }}
     >
       {/* Parallax layer 1 — base */}

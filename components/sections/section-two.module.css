@@ -9,7 +9,7 @@
 
 .gridVisible {
   opacity: 1;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--section-entry-duration-short) var(--section-entry-ease);
 }
 
 .cell {
@@ -65,8 +65,8 @@
   opacity: 1;
   transform: scale(1);
   transition:
-    opacity 0.5s cubic-bezier(0.33, 1, 0.68, 1),
-    transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+    opacity var(--section-entry-duration) var(--section-entry-ease) 0.15s,
+    transform var(--section-entry-duration) var(--section-entry-ease) 0.15s;
 }
 
 @media (max-width: 768px) {

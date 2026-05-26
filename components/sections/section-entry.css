@@ -1,0 +1,11 @@
+/**
+ * Cinematic section entry timing — matched to findrealestate.com
+ * (power4.inOut feel: slow start, decisive finish)
+ */
+:root {
+  --section-entry-ease: cubic-bezier(0.76, 0, 0.24, 1);
+  --section-entry-duration: 1.1s;
+  --section-entry-duration-medium: 0.95s;
+  --section-entry-duration-short: 0.85s;
+  --section-entry-stagger: 0.1s;
+}

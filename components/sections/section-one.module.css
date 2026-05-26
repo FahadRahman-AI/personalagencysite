@@ -76,16 +76,16 @@
   opacity: 1;
   transform: translateX(0);
   transition:
-    opacity 0.7s ease-out,
-    transform 0.7s ease-out;
+    opacity var(--section-entry-duration-medium) var(--section-entry-ease),
+    transform var(--section-entry-duration-medium) var(--section-entry-ease);
 }
 
 .line2Visible {
   opacity: 1;
   transform: translateX(0);
   transition:
-    opacity 0.7s ease-out 0.15s,
-    transform 0.7s ease-out 0.15s;
+    opacity var(--section-entry-duration-medium) var(--section-entry-ease) var(--section-entry-stagger),
+    transform var(--section-entry-duration-medium) var(--section-entry-ease) var(--section-entry-stagger);
 }
 
 @media (max-width: 768px) {

@@ -52,7 +52,7 @@ export default function SectionTwo({
 
   useEffect(() => {
     if (isActive) {
-      const t = setTimeout(() => setAnimated(true), 40);
+      const t = setTimeout(() => setAnimated(true), 80);
       return () => clearTimeout(t);
     }
     setAnimated(false);
@@ -85,7 +85,7 @@ export default function SectionTwo({
               key={`${col}-${row}`}
               className={`${styles.cell} ${content && animated ? styles.cellVisible : ""}`}
               style={{
-                transitionDelay: content && animated ? `${0.05 * i}s` : "0s",
+                transitionDelay: content && animated ? `${0.1 * i}s` : "0s",
               }}
             >
               {content?.text?.split("\n").map((line, j, arr) => (

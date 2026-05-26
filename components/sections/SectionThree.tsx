@@ -19,7 +19,7 @@ export default function SectionThree({
 
   useEffect(() => {
     if (isActive) {
-      const t = setTimeout(() => setAnimated(true), 40);
+      const t = setTimeout(() => setAnimated(true), 80);
       return () => clearTimeout(t);
     }
     setAnimated(false);

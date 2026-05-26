@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../components/sections/section-entry.css";
 
 * {
   box-sizing: border-box;

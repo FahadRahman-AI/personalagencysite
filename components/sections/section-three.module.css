@@ -7,8 +7,8 @@
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity 0.6s ease-out,
-    transform 0.6s ease-out;
+    opacity var(--section-entry-duration-medium) var(--section-entry-ease),
+    transform var(--section-entry-duration-medium) var(--section-entry-ease);
 }
 
 .imageSection {
@@ -20,8 +20,8 @@
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity 0.8s ease-out 0.3s,
-    transform 0.8s ease-out 0.3s;
+    opacity var(--section-entry-duration) var(--section-entry-ease) 0.28s,
+    transform var(--section-entry-duration) var(--section-entry-ease) 0.28s;
 }
 
 @media (max-width: 768px) {
