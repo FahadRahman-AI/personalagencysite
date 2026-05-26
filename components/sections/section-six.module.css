@@ -1,0 +1,5 @@
+.ctaButton:hover {
+  background: #4af0a4 !important;
+  color: #080808 !important;
+  box-shadow: 0 0 40px rgba(74, 240, 164, 0.3);
+}

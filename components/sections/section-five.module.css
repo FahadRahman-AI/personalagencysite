@@ -1,0 +1,55 @@
+.sidebar {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+
+.sidebarVisible {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.mapArea {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+.mapVisible {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+.headline {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.headlineVisible {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.5s ease 0.2s,
+    transform 0.5s ease 0.2s;
+}
+
+.navItem:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .sidebar,
+  .rightBar,
+  .bottomHeadline {
+    display: none;
+  }
+
+  .mapArea {
+    left: 0 !important;
+    right: 0 !important;
+  }
+}

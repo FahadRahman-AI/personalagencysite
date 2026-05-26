@@ -1,0 +1,24 @@
+.scrollHintArrow {
+  animation: bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@media (pointer: fine) {
+  :global(html.custom-cursor-active) {
+    cursor: none;
+  }
+
+  :global(html.custom-cursor-active) a,
+  :global(html.custom-cursor-active) button {
+    cursor: none;
+  }
+}
