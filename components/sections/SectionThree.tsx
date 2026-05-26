@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BRAND } from "./site-copy";
 import styles from "./section-three.module.css";
 
 interface SectionThreeProps {
@@ -8,7 +9,7 @@ interface SectionThreeProps {
   dmSansClass: string;
 }
 
-const HEADLINE_LINES = ["Or maybe", "something", "like this?"];
+const HEADLINE_LINES = ["Authority,", "without noise."];
 
 export default function SectionThree({
   isActive,
@@ -50,10 +51,10 @@ export default function SectionThree({
         }}
       >
         <span style={{ fontSize: 14, fontWeight: 600, color: "#0a0a0a" }}>
-          STUDIO FX
+          {BRAND.name}
         </span>
         <div style={{ display: "flex", gap: 40 }}>
-          {["Services", "Projects", "About"].map((link) => (
+          {["Work", "Process", "Outcomes"].map((link) => (
             <span key={link} style={{ fontSize: 14, color: "#444", cursor: "pointer" }}>
               {link}
             </span>
@@ -72,7 +73,7 @@ export default function SectionThree({
             fontWeight: 500,
           }}
         >
-          Contact us
+          Sample build
         </button>
       </nav>
 
@@ -125,8 +126,8 @@ export default function SectionThree({
               transitionDelay: animated ? "0.3s" : "0s",
             }}
           >
-            Conversion-focused. Built to make your customers trust you in under
-            three seconds. Clean enough to let your product do the talking.
+            Proof up front. Restrained type. White space that signals price before
+            you name it. Built for founders who are done looking early-stage.
           </p>
           <p
             className={`${styles.line} ${animated ? styles.lineVisible : ""}`}
@@ -139,7 +140,7 @@ export default function SectionThree({
               transitionDelay: animated ? "0.35s" : "0s",
             }}
           >
-            Clean · Professional · Converting
+            Editorial · Restrained · High-ticket
           </p>
           <div
             style={{
@@ -161,7 +162,7 @@ export default function SectionThree({
                 cursor: "pointer",
               }}
             >
-              Contact us
+              View structure
             </button>
             <button
               type="button"
@@ -175,7 +176,7 @@ export default function SectionThree({
                 cursor: "pointer",
               }}
             >
-              View projects
+              Compare tiers
             </button>
           </div>
         </div>
@@ -205,7 +206,7 @@ export default function SectionThree({
             letterSpacing: "0.04em",
           }}
         >
-          Minimal · Editorial · Considered
+          Direction 01 — Editorial
         </div>
         <div
           className={dmSansClass}
@@ -222,9 +223,9 @@ export default function SectionThree({
             textAlign: "center",
           }}
         >
-          SOMETHING
+          CALM
           <br />
-          LIKE THIS?
+          POWER
         </div>
       </div>
     </section>

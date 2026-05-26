@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
+import { BRAND, CTA } from "./site-copy";
 import styles from "./section-seven.module.css";
 
 interface Props {
@@ -13,15 +14,15 @@ interface Props {
 const SERVICE_OPTIONS = ["Website", "AI System", "Content", "All three"] as const;
 
 const STATS = [
-  { label: "AVAILABILITY", value: "Open worldwide" },
-  { label: "RESPONSE", value: "Within 24 hours" },
-  { label: "FIRST CALL", value: "Always free" },
-  { label: "BASED IN", value: "Birmingham, UK" },
+  { label: "AVAILABILITY", value: "Taking Q2 projects" },
+  { label: "RESPONSE", value: "Under 24 hours" },
+  { label: "FIRST CALL", value: "Free · 30 min" },
+  { label: "BASED IN", value: `${BRAND.location}, UK` },
 ];
 
 const NAV_LINKS = [
-  { label: "BOOK A FREE CALL ↗", action: "form" as const },
-  { label: "SEND AN EMAIL ↗", action: "mailto" as const, href: "mailto:hello@studiofx.co" },
+  { label: CTA.bookCallShort, action: "form" as const },
+  { label: "EMAIL ↗", action: "mailto" as const, href: `mailto:${BRAND.email}` },
   { label: "INSTAGRAM ↗", action: "link" as const, href: "https://instagram.com" },
   { label: "LINKEDIN ↗", action: "link" as const, href: "https://linkedin.com" },
 ];
@@ -217,7 +218,7 @@ export default function SectionSeven({ isActive, antonClass, fontClass }: Props)
             zIndex: 5,
           }}
         >
-          {["BOOK A FREE CALL", "STUDIO FX · 2024", "WORLDWIDE"].map((label) => (
+          {[BRAND.name, `${BRAND.est}`, `${BRAND.location} — ${BRAND.worldwide}`].map((label) => (
             <span
               key={label}
               style={{
@@ -270,21 +271,21 @@ export default function SectionSeven({ isActive, antonClass, fontClass }: Props)
           className={styles.redCircle}
           onClick={() => setFormOpen(true)}
         >
-          <span className={styles.redCircleText}>START<br />PROJECT</span>
+          <span className={styles.redCircleText}>BRIEF<br />US</span>
         </button>
 
         {/* Bottom left */}
         <div className={`${styles.bottomLeft} ${visible ? styles.bottomLeftVisible : ""}`}>
           <p className={styles.bottomLeftText}>
-            Tell us your vision. We&apos;ll show you exactly what&apos;s possible — and what it
-            takes to make your business look like it belongs in a completely different league.
+            Share your goal and budget band. We reply within 24 hours with scope, timeline,
+            and next steps — not a generic sales sequence.
           </p>
           <button
             type="button"
             className={styles.bottomLeftLink}
             onClick={() => setFormOpen(true)}
           >
-            Book a free call →
+            {CTA.sendBrief}
           </button>
         </div>
 
@@ -332,10 +333,10 @@ export default function SectionSeven({ isActive, antonClass, fontClass }: Props)
               ) : (
                 <form onSubmit={handleSubmit}>
                   <p style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.2em", color: "rgba(255,255,255,0.3)", marginBottom: 48 }}>
-                    START A PROJECT
+                    PROJECT BRIEF
                   </p>
-                  <input type="text" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} required className={styles.fieldInput} />
-                  <input type="email" placeholder="Your email" value={email} onChange={(e) => setEmail(e.target.value)} required className={styles.fieldInput} style={{ marginTop: 8 }} />
+                  <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required className={styles.fieldInput} />
+                  <input type="email" placeholder="Work email" value={email} onChange={(e) => setEmail(e.target.value)} required className={styles.fieldInput} style={{ marginTop: 8 }} />
                   <div style={{ marginTop: 32, display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {SERVICE_OPTIONS.map((option) => (
                       <button
@@ -349,14 +350,14 @@ export default function SectionSeven({ isActive, antonClass, fontClass }: Props)
                       </button>
                     ))}
                   </div>
-                  <textarea placeholder="Tell us about your project" value={message} onChange={(e) => setMessage(e.target.value)} className={styles.fieldInput} style={{ marginTop: 32, minHeight: 80, resize: "none" }} />
+                  <textarea placeholder="What are you building, and what does success look like?" value={message} onChange={(e) => setMessage(e.target.value)} className={styles.fieldInput} style={{ marginTop: 32, minHeight: 80, resize: "none" }} />
                   <button
                     type="submit"
                     disabled={submitting}
                     className={styles.submitBtn}
                     style={{ width: "100%", height: 52, background: "#fff", color: "#0a0a0a", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", border: "none", borderRadius: 0, marginTop: 40, cursor: submitting ? "wait" : "pointer", fontFamily: "inherit" }}
                   >
-                    {submitting ? "SENDING..." : "SEND IT OVER →"}
+                    {submitting ? "SENDING..." : "SUBMIT BRIEF →"}
                   </button>
                 </form>
               )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BRAND } from "./site-copy";
 import styles from "./section-two.module.css";
 
 interface SectionTwoProps {
@@ -18,23 +19,23 @@ type CellContent = {
 
 const CELL_CONTENT: CellContent[] = [
   { col: 1, row: 1, text: "YOUR" },
-  { col: 2, row: 1, text: "RIVALS" },
-  { col: 3, row: 1, text: "ALREADY" },
-  { col: 4, row: 1, text: "LOOK" },
-  { col: 5, row: 1, text: "LIKE THIS." },
-  { col: 6, row: 1, text: "DO" },
-  { col: 7, row: 1, text: "YOU?" },
-  { col: 8, row: 1, text: "IF NOT" },
-  { col: 1, row: 2, text: "READ ON." },
-  { col: 2, row: 2, text: "WE" },
+  { col: 2, row: 1, text: "COMPETITOR" },
+  { col: 3, row: 1, text: "LOOKS" },
+  { col: 4, row: 1, text: "FUNDED." },
+  { col: 5, row: 1, text: "DOES" },
+  { col: 6, row: 1, text: "YOURS?" },
+  { col: 7, row: 1, text: "IF NOT" },
+  { col: 8, row: 1, text: "—" },
+  { col: 1, row: 2, text: "WE CLOSE" },
+  { col: 2, row: 2, text: "THAT" },
   { col: 3, row: 2, cursor: true },
-  { col: 4, row: 2, text: "FIX" },
-  { col: 5, row: 2, text: "THAT." },
+  { col: 4, row: 2, text: "GAP." },
+  { col: 5, row: 2, text: "PREMIUM" },
   { col: 6, row: 2, cursor: true },
-  { col: 7, row: 2, text: "GOOD IS" },
+  { col: 7, row: 2, text: "IS THE" },
   { col: 8, row: 2, cursorWide: true },
-  { col: 1, row: 3, text: "NOT WHERE" },
-  { col: 2, row: 3, text: "WE STOP." },
+  { col: 1, row: 3, text: "BASELINE." },
+  { col: 2, row: 3, text: "NOT THE CEILING." },
   { col: 7, row: 3, cursor: true },
   { col: 8, row: 3, cursor: true },
 ];
@@ -119,7 +120,7 @@ export default function SectionTwo({
           alignItems: "center",
         }}
       >
-        STUDIO FX
+        {BRAND.name}
         <span className={styles.cursorLarge} />
       </div>
     </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BRAND, CTA } from "./site-copy";
 import styles from "./section-one.module.css";
 
 interface SectionOneProps {
@@ -9,12 +10,7 @@ interface SectionOneProps {
   dmSansClass: string;
 }
 
-const LINKS = [
-  "SEE THE WORK ↗",
-  "HOW IT WORKS ↗",
-  "BOOK A CALL ↗",
-  "CONTACT ↗",
-];
+const LINKS = ["PROOF ↗", "PROCESS ↗", CTA.bookCallShort, "BRIEF ↗"];
 
 export default function SectionOne({
   isActive,
@@ -54,7 +50,7 @@ export default function SectionOne({
           zIndex: 3,
         }}
       >
-        {["VISUAL ELEVATION STUDIO", "EST. 2024", "WORLDWIDE"].map((label) => (
+        {[BRAND.name, BRAND.est, BRAND.worldwide].map((label) => (
           <span
             key={label}
             style={{
@@ -94,7 +90,7 @@ export default function SectionOne({
             fontWeight: 400,
           }}
         >
-          YOUR BUSINESS IS
+          YOU&apos;RE LOSING DEALS
         </h1>
         <h1
           className={`${styles.line2} ${animated ? styles.line2Visible : ""}`}
@@ -110,7 +106,7 @@ export default function SectionOne({
             fontWeight: 400,
           }}
         >
-          BETTER THAN THIS.
+          ON APPEARANCE.
         </h1>
       </div>
 
@@ -128,8 +124,8 @@ export default function SectionOne({
           zIndex: 3,
         }}
       >
-        Most businesses are losing clients to competitors who look more credible online —
-        despite being less capable. We fix that.
+        Prospects decide in seconds. We rebuild your site, systems, and content so the
+        business that&apos;s actually better — finally looks it.
       </p>
 
       <nav

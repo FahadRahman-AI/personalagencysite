@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND, CTA } from "./site-copy";
 import styles from "./section-six.module.css";
 
 interface SectionSixProps {
@@ -34,9 +35,9 @@ export default function SectionSix({
             fontWeight: 800,
           }}
         >
-          LET&apos;S MAKE YOUR
+          LOOK LIKE YOU
           <br />
-          BUSINESS LOOK
+          RAISED SERIES A.
           <br />
           <span
             style={{
@@ -44,7 +45,7 @@ export default function SectionSix({
               color: "transparent",
             }}
           >
-            UNFORGETTABLE.
+            NOT BOOTSTRAP.
           </span>
         </h2>
 
@@ -60,8 +61,8 @@ export default function SectionSix({
             lineHeight: 1.6,
           }}
         >
-          One free call. We listen to your vision. You see what&apos;s possible. No
-          commitment until you&apos;re certain.
+          Thirty minutes. You leave with scope, timeline, and a straight answer on
+          whether we&apos;re the right studio — no deck, no pressure.
         </p>
 
         <button
@@ -82,7 +83,7 @@ export default function SectionSix({
             transition: "background 300ms, color 300ms, box-shadow 300ms",
           }}
         >
-          BOOK YOUR FREE CALL →
+          {CTA.bookCall}
         </button>
 
         <p
@@ -94,7 +95,7 @@ export default function SectionSix({
             letterSpacing: "0.06em",
           }}
         >
-          30 minutes · Worldwide · No obligation
+          {CTA.noObligation}
         </p>
 
         <p
@@ -105,7 +106,7 @@ export default function SectionSix({
             marginTop: 16,
           }}
         >
-          hello@studiofx.co
+          {BRAND.email}
         </p>
       </div>
     </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BRAND } from "./site-copy";
 import styles from "./section-five.module.css";
 
 interface SectionFiveProps {
@@ -21,9 +22,9 @@ const NAV_ITEMS = [
 ];
 
 const VERTICAL_TEXT = [
-  "DESIGN & DEVELOPMENT PURVEYORS",
-  "DIGITAL DESIGN REFUGE HAND-CRAFTED",
-  "WEBSITES · AI · CONTENT",
+  "SHIP IN WEEKS",
+  "NOT QUARTERS",
+  "ONE STUDIO · THREE DISCIPLINES",
 ];
 
 export default function SectionFive({
@@ -125,13 +126,13 @@ export default function SectionFive({
           zIndex: 3,
         }}
       >
-        <span>STUDIO FX DIGITAL</span>
+        <span>{BRAND.name} DIGITAL</span>
         <span>{time}</span>
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
           <line x1="8" y1="0" x2="8" y2="16" stroke="rgba(0,0,0,0.4)" strokeWidth="1" />
           <line x1="0" y1="8" x2="16" y2="8" stroke="rgba(0,0,0,0.4)" strokeWidth="1" />
         </svg>
-        <span>EST.2024</span>
+        <span>{BRAND.est}</span>
         <span style={{ fontSize: 14 }}>◎</span>
       </div>
 
@@ -177,10 +178,10 @@ export default function SectionFive({
             lineHeight: 2,
           }}
         >
-          <div>—— Website build</div>
-          <div>- - - AI workflow</div>
-          <div>⚙ Automation</div>
-          <div>◎ Brand identity</div>
+          <div>—— Custom site build</div>
+          <div>- - - n8n · Make · Claude</div>
+          <div>⚙ Ops automation</div>
+          <div>◎ Brand film & content</div>
         </div>
       </aside>
 
@@ -263,7 +264,7 @@ export default function SectionFive({
             color: "rgba(150,255,100,0.9)",
           }}
         >
-          STUDIO FX
+          {BRAND.name}
         </div>
       </div>
 
@@ -315,11 +316,11 @@ export default function SectionFive({
           zIndex: 2,
         }}
       >
-        A VISUAL
+        WEBSITES.
         <br />
-        ELEVATION
+        SYSTEMS.
         <br />
-        STUDIO.
+        CINEMA.
       </div>
 
       <div
@@ -342,10 +343,10 @@ export default function SectionFive({
           zIndex: 3,
         }}
       >
-        <span>WORLDWIDE</span>
-        <span>BRAND ELEVATION</span>
-        <span>SERIES A LEVEL</span>
-        <span>EST. 2024</span>
+        <span>{BRAND.worldwide}</span>
+        <span>SERIES-A PRESENCE</span>
+        <span>FOUNDER-LED</span>
+        <span>{BRAND.est}</span>
       </div>
 
       <div
@@ -382,10 +383,10 @@ export default function SectionFive({
             textTransform: "uppercase",
           }}
         >
-          LATEST PROJECT
+          CASE STUDY
         </div>
         <div style={{ fontSize: 28, fontWeight: 700, color: "#fff", marginTop: 4 }}>
-          CURBSIDE
+          CURBSIDE CO.
         </div>
         <div
           style={{
