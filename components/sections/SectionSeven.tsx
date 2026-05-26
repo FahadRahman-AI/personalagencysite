@@ -13,13 +13,18 @@ interface Props {
 const SERVICE_OPTIONS = ["Website", "AI System", "Content", "All three"] as const;
 
 const STATS = [
-  { label: "WEBSITES", value: "Built to convert" },
-  { label: "AI SYSTEMS", value: "n8n · Make · Claude" },
-  { label: "CONTENT", value: "Cinematic quality" },
-  { label: "LOCATION", value: "Birmingham, UK" },
+  { label: "AVAILABILITY", value: "Open worldwide" },
+  { label: "RESPONSE", value: "Within 24 hours" },
+  { label: "FIRST CALL", value: "Always free" },
+  { label: "BASED IN", value: "Birmingham, UK" },
 ];
 
-const LEFT_NAV = ["Websites", "AI Systems", "Content", "Contact"];
+const NAV_LINKS = [
+  { label: "BOOK A FREE CALL ↗", action: "form" as const },
+  { label: "SEND AN EMAIL ↗", action: "mailto" as const, href: "mailto:hello@studiofx.co" },
+  { label: "INSTAGRAM ↗", action: "link" as const, href: "https://instagram.com" },
+  { label: "LINKEDIN ↗", action: "link" as const, href: "https://linkedin.com" },
+];
 
 interface Particle {
   x: number;
@@ -40,7 +45,7 @@ export default function SectionSeven({ isActive, antonClass, fontClass }: Props)
   const frameRef = useRef(0);
 
   const [visible, setVisible] = useState(false);
-  const [activeNav, setActiveNav] = useState(3);
+  const [activeNav, setActiveNav] = useState(0);
   const [formOpen, setFormOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -199,19 +204,49 @@ export default function SectionSeven({ isActive, antonClass, fontClass }: Props)
         {/* Physics particle canvas */}
         <canvas ref={canvasRef} className={styles.canvas} />
 
+        <nav
+          className={fontClass}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "24px 32px",
+            zIndex: 5,
+          }}
+        >
+          {["BOOK A FREE CALL", "STUDIO FX · 2024", "WORLDWIDE"].map((label) => (
+            <span
+              key={label}
+              style={{
+                fontSize: 11,
+                textTransform: "uppercase",
+                letterSpacing: "0.2em",
+                color: "rgba(0,0,0,0.35)",
+              }}
+            >
+              {label}
+            </span>
+          ))}
+        </nav>
+
         {/* Left sidebar navigation */}
         <nav className={styles.leftNav}>
-          {LEFT_NAV.map((item, i) => (
+          {NAV_LINKS.map((link, i) => (
             <button
-              key={item}
+              key={link.label}
               type="button"
               className={`${styles.navItem} ${i === activeNav ? styles.navItemActive : ""}`}
               onClick={() => {
                 setActiveNav(i);
-                if (item === "Contact") setFormOpen(true);
+                if (link.action === "form") setFormOpen(true);
+                else if (link.action === "mailto" && link.href) window.location.href = link.href;
+                else if (link.action === "link" && link.href) window.open(link.href, "_blank", "noopener,noreferrer");
               }}
             >
-              {item}
+              {link.label}
             </button>
           ))}
         </nav>
@@ -241,14 +276,15 @@ export default function SectionSeven({ isActive, antonClass, fontClass }: Props)
         {/* Bottom left */}
         <div className={`${styles.bottomLeft} ${visible ? styles.bottomLeftVisible : ""}`}>
           <p className={styles.bottomLeftText}>
-            We build websites, AI systems, and cinematic content. Tell us what you need.
+            Tell us your vision. We&apos;ll show you exactly what&apos;s possible — and what it
+            takes to make your business look like it belongs in a completely different league.
           </p>
           <button
             type="button"
             className={styles.bottomLeftLink}
             onClick={() => setFormOpen(true)}
           >
-            Start a project
+            Book a free call →
           </button>
         </div>
 

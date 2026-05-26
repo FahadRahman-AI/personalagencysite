@@ -34,7 +34,9 @@ export default function SectionSix({
             fontWeight: 800,
           }}
         >
-          LET&apos;S BUILD
+          LET&apos;S MAKE YOUR
+          <br />
+          BUSINESS LOOK
           <br />
           <span
             style={{
@@ -42,7 +44,7 @@ export default function SectionSix({
               color: "transparent",
             }}
           >
-            YOURS.
+            UNFORGETTABLE.
           </span>
         </h2>
 
@@ -58,21 +60,8 @@ export default function SectionSix({
             lineHeight: 1.6,
           }}
         >
-          You&apos;ve seen what&apos;s possible. Now let&apos;s build something made
-          for you.
-        </p>
-
-        <p
-          className={dmSansClass}
-          style={{
-            fontSize: 13,
-            color: "rgba(255,255,255,0.35)",
-            marginTop: 32,
-            textTransform: "uppercase",
-            letterSpacing: "0.15em",
-          }}
-        >
-          STUDIO FX · WEBSITES · AI · CONTENT · BIRMINGHAM
+          One free call. We listen to your vision. You see what&apos;s possible. No
+          commitment until you&apos;re certain.
         </p>
 
         <button
@@ -93,15 +82,27 @@ export default function SectionSix({
             transition: "background 300ms, color 300ms, box-shadow 300ms",
           }}
         >
-          START A PROJECT
+          BOOK YOUR FREE CALL →
         </button>
 
         <p
           className={dmSansClass}
           style={{
             fontSize: 12,
-            color: "rgba(255,255,255,0.2)",
+            color: "rgba(255,255,255,0.35)",
             marginTop: 24,
+            letterSpacing: "0.06em",
+          }}
+        >
+          30 minutes · Worldwide · No obligation
+        </p>
+
+        <p
+          className={dmSansClass}
+          style={{
+            fontSize: 12,
+            color: "rgba(255,255,255,0.2)",
+            marginTop: 16,
           }}
         >
           hello@studiofx.co

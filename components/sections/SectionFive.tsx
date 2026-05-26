@@ -315,11 +315,11 @@ export default function SectionFive({
           zIndex: 2,
         }}
       >
-        A CREATIVE STUDIO
+        A VISUAL
         <br />
-        WHERE BRANDS AND
+        ELEVATION
         <br />
-        STORIES GET BUILT
+        STUDIO.
       </div>
 
       <div
@@ -342,10 +342,10 @@ export default function SectionFive({
           zIndex: 3,
         }}
       >
-        <span>72PX | 54PT</span>
-        <span>GOLD IDEAS SEEKERS</span>
-        <span>REPUBLIC OF COLLABORATIVE MINDS</span>
-        <span>16.1KM | 10MI</span>
+        <span>WORLDWIDE</span>
+        <span>BRAND ELEVATION</span>
+        <span>SERIES A LEVEL</span>
+        <span>EST. 2024</span>
       </div>
 
       <div

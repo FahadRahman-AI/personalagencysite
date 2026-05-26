@@ -8,7 +8,7 @@ interface SectionThreeProps {
   dmSansClass: string;
 }
 
-const HEADLINE_LINES = ["Maybe something like this?"];
+const HEADLINE_LINES = ["Or maybe", "something", "like this?"];
 
 export default function SectionThree({
   isActive,
@@ -125,8 +125,21 @@ export default function SectionThree({
               transitionDelay: animated ? "0.3s" : "0s",
             }}
           >
-            Websites, AI automation and cinematic content. We help businesses
-            look and operate better than their competition.
+            Conversion-focused. Built to make your customers trust you in under
+            three seconds. Clean enough to let your product do the talking.
+          </p>
+          <p
+            className={`${styles.line} ${animated ? styles.lineVisible : ""}`}
+            style={{
+              fontSize: 11,
+              color: "#999",
+              marginTop: 16,
+              marginBottom: 0,
+              letterSpacing: "0.04em",
+              transitionDelay: animated ? "0.35s" : "0s",
+            }}
+          >
+            Clean · Professional · Converting
           </p>
           <div
             style={{
@@ -186,6 +199,19 @@ export default function SectionThree({
           style={{
             position: "absolute",
             bottom: 20,
+            left: 48,
+            fontSize: 11,
+            color: "rgba(0,0,0,0.45)",
+            letterSpacing: "0.04em",
+          }}
+        >
+          Minimal · Editorial · Considered
+        </div>
+        <div
+          className={dmSansClass}
+          style={{
+            position: "absolute",
+            bottom: 20,
             left: "50%",
             transform: "translateX(-50%)",
             fontSize: "clamp(80px, 12vw, 160px)",
@@ -193,9 +219,12 @@ export default function SectionThree({
             color: "rgba(255,255,255,0.5)",
             whiteSpace: "nowrap",
             lineHeight: 1,
+            textAlign: "center",
           }}
         >
-          STUDIO FX
+          SOMETHING
+          <br />
+          LIKE THIS?
         </div>
       </div>
     </section>

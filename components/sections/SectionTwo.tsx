@@ -17,18 +17,26 @@ type CellContent = {
 };
 
 const CELL_CONTENT: CellContent[] = [
-  { col: 1, row: 1, text: "WEBSITES\nAND" },
-  { col: 3, row: 1, text: "AI" },
-  { col: 8, row: 1, text: "BUILT\nFOR\nRESULTS" },
-  { col: 2, row: 2, text: "YOUR\nCLIENTS" },
-  { col: 5, row: 1, text: "EVER WANTED\nYOUR SITE TO\nLOOK A CERTAIN\nWAY?" },
-  { col: 6, row: 2, text: "WHO" },
+  { col: 1, row: 1, text: "YOUR" },
+  { col: 2, row: 1, text: "RIVALS" },
+  { col: 3, row: 1, text: "ALREADY" },
+  { col: 4, row: 1, text: "LOOK" },
+  { col: 5, row: 1, text: "LIKE THIS." },
+  { col: 6, row: 1, text: "DO" },
+  { col: 7, row: 1, text: "YOU?" },
+  { col: 8, row: 1, text: "IF NOT" },
+  { col: 1, row: 2, text: "READ ON." },
+  { col: 2, row: 2, text: "WE" },
   { col: 3, row: 2, cursor: true },
-  { col: 7, row: 1, cursor: true },
+  { col: 4, row: 2, text: "FIX" },
+  { col: 5, row: 2, text: "THAT." },
+  { col: 6, row: 2, cursor: true },
+  { col: 7, row: 2, text: "GOOD IS" },
   { col: 8, row: 2, cursorWide: true },
-  { col: 1, row: 3, text: "GOOD IS\nNOT WHERE\nWE STOP." },
-  { col: 6, row: 3, text: "WILL" },
-  { col: 8, row: 3, text: "LOVE" },
+  { col: 1, row: 3, text: "NOT WHERE" },
+  { col: 2, row: 3, text: "WE STOP." },
+  { col: 7, row: 3, cursor: true },
+  { col: 8, row: 3, cursor: true },
 ];
 
 function getCellContent(col: number, row: number) {

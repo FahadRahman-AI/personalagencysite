@@ -9,7 +9,12 @@ interface SectionOneProps {
   dmSansClass: string;
 }
 
-const LINKS = ["WEBSITES ↗", "AI SYSTEMS ↗", "CONTENT ↗", "CONTACT ↗"];
+const LINKS = [
+  "SEE THE WORK ↗",
+  "HOW IT WORKS ↗",
+  "BOOK A CALL ↗",
+  "CONTACT ↗",
+];
 
 export default function SectionOne({
   isActive,
@@ -49,7 +54,7 @@ export default function SectionOne({
           zIndex: 3,
         }}
       >
-        {["WEBSITES", "AI · AUTOMATION", "CONTENT"].map((label) => (
+        {["VISUAL ELEVATION STUDIO", "EST. 2024", "WORLDWIDE"].map((label) => (
           <span
             key={label}
             style={{
@@ -89,7 +94,7 @@ export default function SectionOne({
             fontWeight: 400,
           }}
         >
-          NEED A PROPER
+          YOUR BUSINESS IS
         </h1>
         <h1
           className={`${styles.line2} ${animated ? styles.line2Visible : ""}`}
@@ -105,9 +110,27 @@ export default function SectionOne({
             fontWeight: 400,
           }}
         >
-          WEBSITE?
+          BETTER THAN THIS.
         </h1>
       </div>
+
+      <p
+        className={dmSansClass}
+        style={{
+          position: "absolute",
+          bottom: 40,
+          left: 32,
+          maxWidth: 320,
+          fontSize: 13,
+          color: "rgba(0,0,0,0.5)",
+          lineHeight: 1.7,
+          margin: 0,
+          zIndex: 3,
+        }}
+      >
+        Most businesses are losing clients to competitors who look more credible online —
+        despite being less capable. We fix that.
+      </p>
 
       <nav
         className={`${styles.navLinks} ${dmSansClass}`}

@@ -73,9 +73,9 @@ export default function SectionFour({
       >
         <div>HELLO@STUDIOFX.CO</div>
         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginTop: 4 }}>
-          FOR ALL QUESTIONS
+          FOR ALL ENQUIRIES
         </div>
-        <div>BIRMINGHAM, UK · 2024</div>
+        <div>BIRMINGHAM · WORLDWIDE</div>
       </div>
 
       <div
