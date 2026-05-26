@@ -12,6 +12,7 @@ import SectionFour from "@/components/sections/SectionFour";
 import SectionFive from "@/components/sections/SectionFive";
 import SectionSix from "@/components/sections/SectionSix";
 import SectionSeven from "@/components/sections/SectionSeven";
+import ScrollThread from "@/components/ScrollThread";
 import styles from "./page.module.css";
 
 const anton = Anton({
@@ -118,6 +119,7 @@ export default function Home() {
 
   return (
     <div style={{ position: "relative", minHeight: "700vh" }}>
+      <ScrollThread />
       <div
         style={{
           position: "fixed",

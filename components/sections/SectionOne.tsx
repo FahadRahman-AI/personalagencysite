@@ -67,6 +67,29 @@ export default function SectionOne({
 
       <div className={styles.blob} aria-hidden />
 
+      <h2
+        className={antonClass}
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 10,
+          margin: 0,
+          fontSize: "clamp(48px, 7vw, 100px)",
+          fontWeight: 400,
+          lineHeight: 1,
+          textAlign: "center",
+          whiteSpace: "nowrap",
+          background: "linear-gradient(135deg, #E8520a 0%, #c8a030 50%, #ff8c20 100%)",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
+      >
+        never heard of us?
+      </h2>
+
       <div
         className={antonClass}
         style={{
