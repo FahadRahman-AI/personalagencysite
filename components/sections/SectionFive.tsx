@@ -10,18 +10,7 @@ interface SectionFiveProps {
   antonClass: string;
 }
 
-/** Fifth section in page scroll (0-based index 4) */
 const SECTION_INDEX = 4;
-
-const PARALLAX_SPEEDS = {
-  layer1: 0.04,
-  layer2: 0.1,
-  layer3: 0.16,
-  layer4: 0.24,
-  layer5: 0.2,
-  layer6: 0.28,
-  layer7: 0.14,
-} as const;
 
 export default function SectionFive({
   isActive,
@@ -42,35 +31,26 @@ export default function SectionFive({
 
   useEffect(() => {
     if (!isActive) return;
-
     let rafId = 0;
 
     const handleScroll = () => {
       rafId = requestAnimationFrame(() => {
         const section = sectionRef.current;
         if (!section) return;
-
         const rect = section.getBoundingClientRect();
-        const scrollOffset =
-          rect.top !== 0 ? -rect.top : window.scrollY - SECTION_INDEX * window.innerHeight;
+        const offset = rect.top !== 0
+          ? -rect.top
+          : window.scrollY - SECTION_INDEX * window.innerHeight;
 
-        const [l1, l2, l3, l4, l5, l6, l7] = layerRefs.current;
-
-        if (l1) l1.style.transform = `translateY(${scrollOffset * PARALLAX_SPEEDS.layer1}px)`;
-        if (l2) l2.style.transform = `translateY(${scrollOffset * PARALLAX_SPEEDS.layer2}px)`;
-        if (l3) l3.style.transform = `translateY(${scrollOffset * PARALLAX_SPEEDS.layer3}px) scale(1.02)`;
-        if (l4) {
-          l4.style.transform = `translateY(${scrollOffset * PARALLAX_SPEEDS.layer4}px) translateX(${scrollOffset * 0.02}px)`;
-        }
-        if (l5) {
-          l5.style.transform = `translateY(${scrollOffset * PARALLAX_SPEEDS.layer5}px) rotate(${12 + scrollOffset * 0.015}deg)`;
-        }
-        if (l6) {
-          l6.style.transform = `translateY(${scrollOffset * PARALLAX_SPEEDS.layer6}px) scale(${1 + scrollOffset * 0.0003})`;
-        }
-        if (l7) {
-          l7.style.transform = `translateY(${scrollOffset * PARALLAX_SPEEDS.layer7}px)`;
-        }
+        const [l1, l2, l3, l4, l5, l6, l7, l8] = layerRefs.current;
+        if (l1) l1.style.transform = `translateY(${offset * 0.03}px)`;
+        if (l2) l2.style.transform = `translateY(${offset * 0.08}px)`;
+        if (l3) l3.style.transform = `translateY(${offset * 0.14}px)`;
+        if (l4) l4.style.transform = `translateY(${offset * 0.2}px)`;
+        if (l5) l5.style.transform = `translateY(${offset * 0.28}px) rotate(${offset * 0.01}deg)`;
+        if (l6) l6.style.transform = `translateY(${offset * 0.35}px)`;
+        if (l7) l7.style.transform = `translateY(${offset * 0.18}px)`;
+        if (l8) l8.style.transform = `translateY(${offset * 0.42}px)`;
       });
     };
 
@@ -82,8 +62,8 @@ export default function SectionFive({
     };
   }, [isActive]);
 
-  const setLayerRef = (index: number) => (el: HTMLDivElement | null) => {
-    layerRefs.current[index] = el;
+  const ref = (i: number) => (el: HTMLDivElement | null) => {
+    layerRefs.current[i] = el;
   };
 
   return (
@@ -95,143 +75,157 @@ export default function SectionFive({
         minHeight: "100vh",
         position: "relative",
         overflow: "hidden",
-        transition: "opacity 0.6s cubic-bezier(0.76, 0, 0.24, 1)",
+        background: "#060606",
       }}
     >
-      {/* Layer 1 — deepest void */}
+      {/* LAYER 1 — base background — barely moves */}
       <div
-        ref={setLayerRef(0)}
+        ref={ref(0)}
         style={{
           position: "absolute",
-          inset: 0,
+          inset: "-10%",
           zIndex: 0,
-          background:
-            "radial-gradient(ellipse 120% 80% at 25% 70%, rgba(35,18,8,1) 0%, #141414 45%, #060606 100%)",
+          background: "radial-gradient(ellipse 140% 100% at 20% 80%, #1a0a02 0%, #0d0d0d 50%, #060606 100%)",
           willChange: "transform",
         }}
       />
 
-      {/* Layer 2 — distant warm horizon */}
+      {/* LAYER 2 — large amber glow orb — slow */}
       <div
-        ref={setLayerRef(1)}
+        ref={ref(1)}
         style={{
           position: "absolute",
-          top: "-15%",
-          left: "-15%",
-          width: "130%",
-          height: "130%",
-          zIndex: 1,
-          background:
-            "radial-gradient(ellipse 70% 50% at 55% 35%, rgba(120,45,15,0.35) 0%, transparent 55%)",
-          willChange: "transform",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Layer 3 — cool atmospheric bloom (FIND sky depth) */}
-      <div
-        ref={setLayerRef(2)}
-        style={{
-          position: "absolute",
-          top: "5%",
-          right: "-20%",
-          width: "80%",
+          top: "10%",
+          left: "-5%",
+          width: "65%",
           height: "70%",
-          zIndex: 2,
-          background:
-            "radial-gradient(ellipse at 40% 30%, rgba(60,80,120,0.12) 0%, transparent 65%)",
-          filter: "blur(40px)",
+          zIndex: 1,
+          borderRadius: "50%",
+          background: "radial-gradient(circle at 50% 50%, rgba(180,70,10,0.22) 0%, rgba(120,40,5,0.12) 40%, transparent 70%)",
+          filter: "blur(60px)",
           willChange: "transform",
           pointerEvents: "none",
         }}
       />
 
-      {/* Layer 4 — mid-depth architectural slab */}
+      {/* LAYER 3 — large dark rectangle card — mid speed */}
       <div
-        ref={setLayerRef(3)}
+        ref={ref(2)}
         style={{
           position: "absolute",
-          top: "18%",
-          left: "8%",
-          width: "55%",
-          height: "clamp(280px, 42vh, 520px)",
+          top: "8%",
+          left: "12%",
+          width: "50%",
+          height: "55%",
+          zIndex: 2,
+          background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 4,
+          willChange: "transform",
+          pointerEvents: "none",
+          boxShadow: "0 60px 140px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)",
+        }}
+      />
+
+      {/* LAYER 4 — second smaller card offset — faster */}
+      <div
+        ref={ref(3)}
+        style={{
+          position: "absolute",
+          top: "25%",
+          right: "8%",
+          width: "28%",
+          height: "40%",
           zIndex: 3,
-          background:
-            "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.008) 100%)",
+          background: "linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%)",
           border: "1px solid rgba(255,255,255,0.05)",
-          borderRadius: 2,
-          boxShadow: "0 40px 120px rgba(0,0,0,0.5)",
+          borderRadius: 4,
           willChange: "transform",
           pointerEvents: "none",
         }}
       />
 
-      {/* Layer 5 — floating rotated frame */}
+      {/* LAYER 5 — rotating diamond — fastest geometric */}
       <div
-        ref={setLayerRef(4)}
+        ref={ref(4)}
+        style={{
+          position: "absolute",
+          top: "55%",
+          left: "60%",
+          width: 240,
+          height: 240,
+          zIndex: 3,
+          border: "1px solid rgba(255,255,255,0.06)",
+          transform: "rotate(45deg)",
+          willChange: "transform",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* LAYER 6 — small bright accent dot — very fast */}
+      <div
+        ref={ref(5)}
+        style={{
+          position: "absolute",
+          top: "35%",
+          left: "72%",
+          width: 6,
+          height: 6,
+          zIndex: 4,
+          borderRadius: "50%",
+          background: "rgba(255,255,255,0.6)",
+          boxShadow: "0 0 20px rgba(255,255,255,0.4), 0 0 60px rgba(200,140,60,0.3)",
+          willChange: "transform",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* LAYER 7 — horizontal light streak */}
+      <div
+        ref={ref(6)}
         style={{
           position: "absolute",
           top: "48%",
-          right: "12%",
-          width: "clamp(200px, 28vw, 380px)",
-          height: "clamp(200px, 28vw, 380px)",
-          zIndex: 3,
-          background: "transparent",
-          border: "1px solid rgba(255,255,255,0.04)",
-          transform: "rotate(12deg)",
-          willChange: "transform",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Layer 6 — foreground mist band (FIND cloud layer analogue) */}
-      <div
-        ref={setLayerRef(5)}
-        style={{
-          position: "absolute",
-          bottom: "-5%",
-          left: "-10%",
-          width: "120%",
-          height: "55%",
-          zIndex: 4,
-          background:
-            "linear-gradient(to top, rgba(12,12,12,0.95) 0%, rgba(20,20,20,0.4) 40%, transparent 100%)",
-          filter: "blur(2px)",
-          willChange: "transform",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Layer 7 — soft light streak */}
-      <div
-        ref={setLayerRef(6)}
-        style={{
-          position: "absolute",
-          top: "30%",
-          left: "35%",
-          width: "40%",
+          left: 0,
+          width: "100%",
           height: 1,
           zIndex: 4,
-          background:
-            "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+          background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 30%, rgba(255,200,100,0.1) 50%, rgba(255,255,255,0.06) 70%, transparent 100%)",
           willChange: "transform",
           pointerEvents: "none",
         }}
       />
 
-      {/* Layer 8 — fixed vignette (no scroll) */}
+      {/* LAYER 8 — small second accent dot */}
+      <div
+        ref={ref(7)}
+        style={{
+          position: "absolute",
+          top: "20%",
+          left: "30%",
+          width: 4,
+          height: 4,
+          zIndex: 4,
+          borderRadius: "50%",
+          background: "rgba(255,180,60,0.8)",
+          boxShadow: "0 0 16px rgba(255,180,60,0.5)",
+          willChange: "transform",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* FIXED vignette — no scroll */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           zIndex: 5,
-          background:
-            "linear-gradient(to bottom, rgba(6,6,6,0.2) 0%, transparent 35%, rgba(6,6,6,0.5) 70%, rgba(6,6,6,0.92) 100%)",
+          background: "linear-gradient(to bottom, rgba(6,6,6,0.4) 0%, transparent 25%, transparent 60%, rgba(6,6,6,0.95) 100%)",
           pointerEvents: "none",
         }}
       />
 
-      {/* Content — above all parallax */}
+      {/* CONTENT — z-index 10, above all layers */}
       <div
         className={`${spaceGroteskClass} ${styles.meta} ${animated ? styles.metaVisible : ""}`}
         style={{
@@ -254,27 +248,42 @@ export default function SectionFive({
         <span>{BRAND.worldwide}</span>
       </div>
 
-      <p
+      {/* Centre label */}
+      <div
         className={`${spaceGroteskClass} ${styles.caption} ${animated ? styles.captionVisible : ""}`}
         style={{
           position: "absolute",
-          top: "42%",
+          top: "50%",
           left: "50%",
-          transform: "translateX(-50%)",
+          transform: "translate(-50%, -50%)",
           zIndex: 10,
-          fontSize: 12,
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "rgba(255,255,255,0.25)",
-          margin: 0,
           textAlign: "center",
-          maxWidth: 360,
-          lineHeight: 1.6,
+          pointerEvents: "none",
         }}
       >
-        Scroll through the stack — each layer moves at its own speed
-      </p>
+        <p style={{
+          fontSize: 11,
+          letterSpacing: "0.2em",
+          textTransform: "uppercase",
+          color: "rgba(255,255,255,0.2)",
+          margin: "0 0 20px 0",
+        }}>
+          Visual Elevation Studio
+        </p>
+        <p style={{
+          fontSize: "clamp(13px, 1.6vw, 18px)",
+          color: "rgba(255,255,255,0.5)",
+          lineHeight: 1.7,
+          maxWidth: 420,
+          margin: 0,
+          fontWeight: 300,
+        }}>
+          Every layer you see is moving at a different speed.<br />
+          That&apos;s what we do to your brand.
+        </p>
+      </div>
 
+      {/* Main headline — bottom bleeding */}
       <h1
         className={`${antonClass} ${styles.headline} ${animated ? styles.headlineVisible : ""}`}
         style={{
@@ -295,6 +304,7 @@ export default function SectionFive({
         ABOUT THIS?
       </h1>
 
+      {/* Scroll hint */}
       <div
         className={`${spaceGroteskClass} ${styles.scrollHint} ${animated ? styles.scrollHintVisible : ""}`}
         style={{
