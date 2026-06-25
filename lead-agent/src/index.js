@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
+import nodemailer from "nodemailer";
 import { createClient } from "@supabase/supabase-js";
-import { Resend } from "resend";
 import { qualifyLead, buildQualificationEmail } from "./qualify.js";
 import { sendPendingFollowUps, markLeadReplied } from "./followup.js";
 
@@ -9,20 +9,30 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
+const FROM_NAME = "Fahad — Studio FX";
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 }
 
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+}
+
 function validateEnv() {
   const required = [
     "ANTHROPIC_API_KEY",
-    "RESEND_API_KEY",
+    "GMAIL_USER",
+    "GMAIL_APP_PASSWORD",
     "SUPABASE_URL",
     "SUPABASE_ANON_KEY",
     "CALENDLY_LINK",
-    "FROM_EMAIL",
-    "FROM_NAME",
   ];
   const missing = required.filter((k) => !process.env[k]);
   if (missing.length > 0) {
@@ -48,7 +58,6 @@ app.post("/leads", async (req, res) => {
   try {
     const supabase = getSupabase();
 
-    // Persist the lead before sending anything
     const { data: lead, error: insertError } = await supabase
       .from("leads")
       .insert({
@@ -65,26 +74,22 @@ app.post("/leads", async (req, res) => {
       return res.status(500).json({ error: "Failed to store lead" });
     }
 
-    // Generate personalised response + qualifying questions via Claude
     const qualification = await qualifyLead({ name, email, enquiryText });
-
-    // Build and send the qualification email via Resend
     const html = buildQualificationEmail({ name, email, enquiryText }, qualification);
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const { error: emailError } = await resend.emails.send({
-      from: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
-      to: email,
-      subject: `Re: your enquiry — let's talk, ${name.split(" ")[0]}!`,
-      html,
-    });
-
-    if (emailError) {
-      console.error("Resend error:", emailError);
-      // Don't block — lead is stored; flag for manual review
+    try {
+      const transporter = getTransporter();
+      await transporter.sendMail({
+        from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
+        to: email,
+        subject: `Re: your enquiry — let's talk, ${name.split(" ")[0]}!`,
+        html,
+      });
+    } catch (emailErr) {
+      console.error("Gmail send error:", emailErr);
       await supabase
         .from("leads")
-        .update({ email_error: JSON.stringify(emailError) })
+        .update({ email_error: emailErr.message })
         .eq("id", lead.id);
 
       return res.status(207).json({
@@ -94,7 +99,6 @@ app.post("/leads", async (req, res) => {
       });
     }
 
-    // Mark qualification email as sent
     await supabase
       .from("leads")
       .update({ qualification_email_sent_at: new Date().toISOString() })

@@ -1,11 +1,21 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { createClient } from "@supabase/supabase-js";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 }
+
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+}
+
+const FROM_NAME = "Fahad — Studio FX";
 
 /**
  * Checks leads that have not replied within 24 hours and sends a follow-up email.
@@ -62,29 +72,20 @@ export async function sendPendingFollowUps() {
   return { sent, skipped };
 }
 
-/**
- * Sends a single follow-up email to a lead that hasn't replied.
- */
 async function sendFollowUpEmail(lead) {
-  const fromName = process.env.FROM_NAME;
-  const fromEmail = process.env.FROM_EMAIL;
   const calendlyLink = process.env.CALENDLY_LINK;
+  const html = buildFollowUpHtml(lead, { calendlyLink });
 
-  const html = buildFollowUpHtml(lead, { fromName, calendlyLink });
-
-  const { error } = await resend.emails.send({
-    from: `${fromName} <${fromEmail}>`,
+  const transporter = getTransporter();
+  await transporter.sendMail({
+    from: `"${FROM_NAME}" <${process.env.GMAIL_USER}>`,
     to: lead.email,
     subject: `Just checking in, ${lead.name.split(" ")[0]} 👋`,
     html,
   });
-
-  if (error) {
-    throw new Error(`Resend error: ${JSON.stringify(error)}`);
-  }
 }
 
-function buildFollowUpHtml(lead, { fromName, calendlyLink }) {
+function buildFollowUpHtml(lead, { calendlyLink }) {
   const firstName = lead.name.split(" ")[0];
 
   return `<!DOCTYPE html>
@@ -103,7 +104,7 @@ function buildFollowUpHtml(lead, { fromName, calendlyLink }) {
 
   <p>Either way, hope to connect soon!</p>
 
-  <p>Best,<br /><strong>${fromName}</strong></p>
+  <p>Best,<br /><strong>${FROM_NAME}</strong></p>
 </body>
 </html>`;
 }
