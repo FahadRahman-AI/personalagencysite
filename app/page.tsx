@@ -13,6 +13,7 @@ import SectionFive from "@/components/sections/SectionFive";
 import SectionSix from "@/components/sections/SectionSix";
 import SectionSeven from "@/components/sections/SectionSeven";
 import ScrollThread from "@/components/ScrollThread";
+import LenisProvider from "@/components/LenisProvider";
 import styles from "./page.module.css";
 
 const anton = Anton({
@@ -118,6 +119,8 @@ export default function Home() {
   const dotColor = DOT_COLORS[activeSection] ?? "#0a0a0a";
 
   return (
+    <LenisProvider>
+    <div id="grain" aria-hidden="true" />
     <div style={{ position: "relative", minHeight: "700vh" }}>
       <ScrollThread />
       <div
@@ -164,6 +167,7 @@ export default function Home() {
           </div>
           <div style={sectionStyle(5)}>
             <SectionSix
+              isActive={activeSection === 5}
               spaceGroteskClass={spaceGrotesk.className}
               dmSansClass={dmSans.className}
             />
@@ -266,5 +270,6 @@ export default function Home() {
       <CustomCursor activeSection={activeSection} />
       <WipeOverlay />
     </div>
+    </LenisProvider>
   );
 }
