@@ -1,219 +1,221 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSpring, animated } from '@react-spring/web';
 
-interface Node {
+interface WorkflowNode {
   x: number;
   y: number;
   label: string;
-  glowTimer: number;
+  glowProgress: number;
+  glowing: boolean;
 }
 
-interface Particle {
-  x: number;
-  y: number;
+interface FlowParticle {
   progress: number;
   speed: number;
-  fromNode: number;
+  segment: number;
+}
+
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setInView(true); obs.disconnect(); }
+    }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
 }
 
 export default function ProofSection() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { ref: sectionRef, inView } = useInView();
+
+  const headerSpring = useSpring({
+    opacity: inView ? 1 : 0,
+    y: inView ? 0 : 40,
+    config: { mass: 1, tension: 160, friction: 38 },
+    delay: 100,
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    const dpr = window.devicePixelRatio || 1;
-
-    const setSize = () => {
-      const w = canvas.parentElement?.clientWidth || 800;
-      canvas.width = w * dpr;
-      canvas.height = 500 * dpr;
-      canvas.style.width = w + 'px';
-      canvas.style.height = '500px';
-      ctx.scale(dpr, dpr);
+    const resize = () => {
+      const w = container.clientWidth;
+      const h = 480;
+      canvas.width  = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width  = w + 'px';
+      canvas.style.height = h + 'px';
     };
-    setSize();
+    resize();
 
-    const nodeLabels = ['ENQUIRY', 'AI QUALIFIES', 'EMAIL SENT', 'FOLLOW UP', 'CALL BOOKED'];
+    const ctx = canvas.getContext('2d')!;
+    ctx.scale(dpr, dpr);
+
     const W = canvas.width / dpr;
     const H = canvas.height / dpr;
-    const padding = 60;
-    const nodeW = 110;
-    const nodeH = 48;
-    const nodeSpacing = (W - padding * 2 - nodeW) / (nodeLabels.length - 1);
 
-    const nodes: Node[] = nodeLabels.map((label, i) => ({
-      x: padding + i * nodeSpacing + nodeW / 2,
+    const NODE_LABELS = ['ENQUIRY', 'AI QUALIFIES', 'EMAIL SENT', 'FOLLOW UP', 'CALL BOOKED'];
+    const NW = 108, NH = 44;
+    const pad = 56;
+    const step = (W - pad * 2 - NW) / (NODE_LABELS.length - 1);
+
+    const nodes: WorkflowNode[] = NODE_LABELS.map((label, i) => ({
+      x: pad + i * step + NW / 2,
       y: H / 2,
       label,
-      glowTimer: 0,
+      glowProgress: 1,
+      glowing: false,
     }));
 
-    const flowParticles: Particle[] = [];
-    for (let seg = 0; seg < nodeLabels.length - 1; seg++) {
-      for (let p = 0; p < 3; p++) {
-        flowParticles.push({
-          x: 0,
-          y: 0,
-          progress: Math.random(),
-          speed: 0.003 + Math.random() * 0.002,
-          fromNode: seg,
-        });
+    const particles: FlowParticle[] = [];
+    for (let seg = 0; seg < NODE_LABELS.length - 1; seg++) {
+      for (let p = 0; p < 4; p++) {
+        particles.push({ progress: Math.random(), speed: 0.0025 + Math.random() * 0.002, segment: seg });
       }
     }
 
-    let pulseNode = 0;
-    let lastPulse = Date.now();
+    let pulseIdx = 0;
+    let lastPulse = 0;
     let rafId: number;
 
-    const draw = () => {
+    const roundRect = (x: number, y: number, w: number, h: number, r: number) => {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    };
+
+    const draw = (ts: number) => {
       rafId = requestAnimationFrame(draw);
       ctx.clearRect(0, 0, W, H);
 
-      // Pulse every 3 seconds
-      const now = Date.now();
-      if (now - lastPulse > 3000) {
-        lastPulse = now;
-        nodes[pulseNode].glowTimer = 0;
-        pulseNode = (pulseNode + 1) % nodes.length;
+      // Trigger pulse every 3s
+      if (ts - lastPulse > 3000) {
+        lastPulse = ts;
+        nodes[pulseIdx].glowing = true;
+        nodes[pulseIdx].glowProgress = 0;
+        pulseIdx = (pulseIdx + 1) % nodes.length;
       }
 
-      // Draw connecting lines
+      // Advance glow
+      nodes.forEach(n => { if (n.glowing) { n.glowProgress = Math.min(n.glowProgress + 0.012, 1); } });
+
+      // Connector lines
       for (let i = 0; i < nodes.length - 1; i++) {
-        const from = nodes[i];
-        const to = nodes[i + 1];
+        const a = nodes[i], b = nodes[i + 1];
         ctx.beginPath();
-        ctx.moveTo(from.x + nodeW / 2, from.y);
-        ctx.lineTo(to.x - nodeW / 2, to.y);
-        ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+        ctx.moveTo(a.x + NW / 2, a.y);
+        ctx.lineTo(b.x - NW / 2, b.y);
+        ctx.strokeStyle = 'rgba(255,255,255,0.06)';
         ctx.lineWidth = 1;
         ctx.stroke();
       }
 
-      // Draw flow particles along lines
-      for (const p of flowParticles) {
+      // Flow particles
+      particles.forEach(p => {
         p.progress += p.speed;
         if (p.progress >= 1) p.progress = 0;
-
-        const from = nodes[p.fromNode];
-        const to = nodes[p.fromNode + 1];
-        const x1 = from.x + nodeW / 2;
-        const y1 = from.y;
-        const x2 = to.x - nodeW / 2;
-        const y2 = to.y;
-
-        p.x = x1 + (x2 - x1) * p.progress;
-        p.y = y1 + (y2 - y1) * p.progress;
-
+        const a = nodes[p.segment], b = nodes[p.segment + 1];
+        const x1 = a.x + NW / 2, y1 = a.y;
+        const x2 = b.x - NW / 2, y2 = b.y;
+        const px = x1 + (x2 - x1) * p.progress;
+        const py = y1 + (y2 - y1) * p.progress;
+        const alpha = Math.sin(p.progress * Math.PI);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#E8350A';
+        ctx.arc(px, py, 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(232, 53, 10, ${alpha * 0.9})`;
         ctx.fill();
-      }
+      });
 
-      // Draw nodes
-      for (let i = 0; i < nodes.length; i++) {
-        const n = nodes[i];
-        const nx = n.x - nodeW / 2;
-        const ny = n.y - nodeH / 2;
+      // Nodes
+      nodes.forEach(n => {
+        const nx = n.x - NW / 2;
+        const ny = n.y - NH / 2;
+        const glowAlpha = n.glowing ? Math.sin(n.glowProgress * Math.PI) : 0;
 
-        const glowing = n.glowTimer < 1;
-        if (glowing) {
-          n.glowTimer += 0.015;
-          const alpha = Math.sin(n.glowTimer * Math.PI) * 0.8;
+        if (glowAlpha > 0.01) {
           ctx.shadowColor = '#E8350A';
-          ctx.shadowBlur = 30 * alpha;
-        } else {
-          ctx.shadowBlur = 0;
+          ctx.shadowBlur  = 24 * glowAlpha;
         }
 
-        // Rounded rect
-        ctx.beginPath();
-        const r = 8;
-        ctx.moveTo(nx + r, ny);
-        ctx.lineTo(nx + nodeW - r, ny);
-        ctx.quadraticCurveTo(nx + nodeW, ny, nx + nodeW, ny + r);
-        ctx.lineTo(nx + nodeW, ny + nodeH - r);
-        ctx.quadraticCurveTo(nx + nodeW, ny + nodeH, nx + nodeW - r, ny + nodeH);
-        ctx.lineTo(nx + r, ny + nodeH);
-        ctx.quadraticCurveTo(nx, ny + nodeH, nx, ny + nodeH - r);
-        ctx.lineTo(nx, ny + r);
-        ctx.quadraticCurveTo(nx, ny, nx + r, ny);
-        ctx.closePath();
-
-        const borderAlpha = glowing ? 0.15 + Math.sin(n.glowTimer * Math.PI) * 0.4 : 0.15;
-        ctx.strokeStyle = `rgba(255,255,255,${borderAlpha})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+        roundRect(nx, ny, NW, NH, 6);
+        ctx.fillStyle   = `rgba(232,53,10,${glowAlpha * 0.08})`;
         ctx.fill();
+        ctx.strokeStyle = `rgba(255,255,255,${0.1 + glowAlpha * 0.5})`;
+        ctx.lineWidth   = glowAlpha > 0.5 ? 1.5 : 1;
+        ctx.stroke();
+        ctx.shadowBlur  = 0;
 
-        ctx.shadowBlur = 0;
-
-        // Label
-        ctx.font = '10px var(--font-space-grotesk, sans-serif)';
-        ctx.fillStyle = 'white';
-        ctx.textAlign = 'center';
+        ctx.font        = '600 9px var(--font-space-grotesk, sans-serif)';
+        ctx.fillStyle   = `rgba(255,255,255,${0.6 + glowAlpha * 0.4})`;
+        ctx.textAlign   = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(n.label, n.x, n.y);
-      }
+      });
     };
 
-    draw();
-
-    const onResize = () => {
-      ctx.resetTransform();
-      setSize();
-    };
-    window.addEventListener('resize', onResize);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', onResize);
-    };
+    rafId = requestAnimationFrame(draw);
+    window.addEventListener('resize', () => { ctx.resetTransform(); resize(); ctx.scale(dpr, dpr); });
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
   return (
-    <section
-      style={{
-        background: '#080808',
-        padding: '160px 0',
-        textAlign: 'center',
-      }}
-    >
-      <div className="fade-up" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 40px' }}>
-        <h2
-          style={{
+    <section style={{ background: '#080808', padding: '160px 0', textAlign: 'center' }}>
+      <div ref={sectionRef} style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 48px' }}>
+        <animated.div style={headerSpring}>
+          <p style={{
+            fontFamily: 'var(--font-space-grotesk)',
+            fontSize: '11px',
+            color: '#E8350A',
+            letterSpacing: '0.3em',
+            textTransform: 'uppercase',
+            marginBottom: '20px',
+          }}>
+            LIVE SYSTEM
+          </p>
+          <h2 style={{
             fontFamily: 'var(--font-anton)',
-            fontSize: 'clamp(48px, 8vw, 80px)',
+            fontSize: 'clamp(48px, 7vw, 88px)',
             color: 'white',
+            lineHeight: 0.9,
             marginBottom: '16px',
-          }}
-        >
-          THE SYSTEM
-        </h2>
-        <p
-          style={{
+            letterSpacing: '-0.01em',
+          }}>
+            THE SYSTEM
+          </h2>
+          <p style={{
             fontFamily: 'var(--font-space-grotesk)',
             fontWeight: 300,
-            fontSize: '16px',
-            color: 'rgba(255,255,255,0.4)',
-            marginBottom: '64px',
-          }}
-        >
-          Working in real time
-        </p>
+            fontSize: '15px',
+            color: 'rgba(255,255,255,0.35)',
+            marginBottom: '72px',
+          }}>
+            Working in real time
+          </p>
+        </animated.div>
 
-        <div style={{ width: '100%', overflowX: 'auto' }}>
-          <canvas
-            ref={canvasRef}
-            style={{ display: 'block' }}
-          />
+        <div ref={containerRef} style={{ width: '100%', overflowX: 'auto' }}>
+          <canvas ref={canvasRef} style={{ display: 'block' }} />
         </div>
       </div>
     </section>

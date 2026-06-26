@@ -1,5 +1,8 @@
 'use client';
 
+import { useRef, useEffect, useState } from 'react';
+import { useSpring, useTrail, animated } from '@react-spring/web';
+
 const services = [
   {
     num: '01',
@@ -18,95 +21,124 @@ const services = [
   },
 ];
 
-export default function WhatWeDoSection() {
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setInView(true); obs.disconnect(); }
+    }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
+
+function ServiceBlock({ s, index }: { s: typeof services[0]; index: number }) {
+  const { ref, inView } = useInView();
+
+  const spring = useSpring({
+    opacity: inView ? 1 : 0,
+    y: inView ? 0 : 32,
+    config: { mass: 1, tension: 200, friction: 38 },
+    delay: index * 120,
+  });
+
   return (
-    <section
+    <animated.div
+      ref={ref}
       style={{
-        background: '#080808',
-        padding: '160px 0',
+        ...spring,
+        borderTop: '1px solid rgba(255,255,255,0.07)',
+        padding: '36px 0',
       }}
     >
+      <p style={{
+        fontFamily: 'var(--font-anton)',
+        fontSize: '52px',
+        color: 'rgba(255,255,255,0.1)',
+        lineHeight: 1,
+        marginBottom: '14px',
+        letterSpacing: '-0.02em',
+      }}>{s.num}</p>
+      <h3 style={{
+        fontFamily: 'var(--font-space-grotesk)',
+        fontWeight: 600,
+        fontSize: '19px',
+        color: 'white',
+        marginBottom: '14px',
+        letterSpacing: '0.01em',
+      }}>{s.title}</h3>
+      <p style={{
+        fontFamily: 'var(--font-space-grotesk)',
+        fontWeight: 300,
+        fontSize: '14px',
+        color: 'rgba(255,255,255,0.45)',
+        lineHeight: 1.85,
+      }}>{s.body}</p>
+    </animated.div>
+  );
+}
+
+export default function WhatWeDoSection() {
+  const { ref: headRef, inView: headInView } = useInView(0.2);
+
+  const words = ['WE MAKE YOUR', 'BUSINESS RUN', 'ITSELF.'];
+  const trail = useTrail(words.length, {
+    opacity: headInView ? 1 : 0,
+    y: headInView ? 0 : 60,
+    config: { mass: 1, tension: 180, friction: 38 },
+    delay: 0,
+  });
+
+  return (
+    <section style={{ background: '#080808', padding: '160px 0' }}>
       <div
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: '0 40px',
+          padding: '0 48px',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
-          gap: '80px',
+          gap: '96px',
           alignItems: 'start',
         }}
-        className="what-we-do-grid fade-up"
+        className="wwds-grid"
       >
-        {/* Left headline */}
-        <div>
-          <h2
-            style={{
-              fontFamily: 'var(--font-anton)',
-              fontSize: 'clamp(60px, 8vw, 120px)',
-              lineHeight: 0.9,
-              color: 'white',
-            }}
-          >
-            <span style={{ display: 'block' }}>WE MAKE YOUR</span>
-            <span style={{ display: 'block' }}>BUSINESS RUN</span>
-            <span style={{ display: 'block', color: '#E8350A' }}>ITSELF.</span>
+        {/* Headline */}
+        <div ref={headRef}>
+          <h2 style={{
+            fontFamily: 'var(--font-anton)',
+            fontSize: 'clamp(52px, 7vw, 112px)',
+            lineHeight: 0.88,
+            letterSpacing: '-0.01em',
+          }}>
+            {trail.map((spring, i) => (
+              <animated.span
+                key={i}
+                style={{ ...spring, display: 'block', color: i === 2 ? '#E8350A' : 'white' }}
+              >
+                {words[i]}
+              </animated.span>
+            ))}
           </h2>
         </div>
 
-        {/* Right services */}
+        {/* Services */}
         <div>
-          {services.map((s) => (
-            <div
-              key={s.num}
-              style={{
-                borderTop: '1px solid rgba(255,255,255,0.08)',
-                padding: '32px 0',
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: 'var(--font-anton)',
-                  fontSize: '48px',
-                  color: 'rgba(255,255,255,0.15)',
-                  lineHeight: 1,
-                  marginBottom: '12px',
-                }}
-              >
-                {s.num}
-              </p>
-              <h3
-                style={{
-                  fontFamily: 'var(--font-space-grotesk)',
-                  fontWeight: 600,
-                  fontSize: '20px',
-                  color: 'white',
-                  marginBottom: '12px',
-                }}
-              >
-                {s.title}
-              </h3>
-              <p
-                style={{
-                  fontFamily: 'var(--font-space-grotesk)',
-                  fontWeight: 300,
-                  fontSize: '14px',
-                  color: 'rgba(255,255,255,0.5)',
-                  lineHeight: 1.8,
-                }}
-              >
-                {s.body}
-              </p>
-            </div>
+          {services.map((s, i) => (
+            <ServiceBlock key={s.num} s={s} index={i} />
           ))}
         </div>
       </div>
 
       <style>{`
-        @media (max-width: 768px) {
-          .what-we-do-grid {
+        @media (max-width: 860px) {
+          .wwds-grid {
             grid-template-columns: 1fr !important;
-            gap: 48px !important;
+            gap: 56px !important;
             padding: 0 24px !important;
           }
         }

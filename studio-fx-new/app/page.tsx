@@ -1,18 +1,18 @@
-import HeroSection from '@/components/HeroSection';
-import MarqueeSection from '@/components/MarqueeSection';
+import HeroSection     from '@/components/HeroSection';
+import MarqueeSection  from '@/components/MarqueeSection';
 import WhatWeDoSection from '@/components/WhatWeDoSection';
-import ProofSection from '@/components/ProofSection';
-import StatsSection from '@/components/StatsSection';
-import CTASection from '@/components/CTASection';
-import FooterSection from '@/components/FooterSection';
-import CustomCursor from '@/components/CustomCursor';
-import ScrollObserver from '@/components/ScrollObserver';
+import ProofSection    from '@/components/ProofSection';
+import StatsSection    from '@/components/StatsSection';
+import CTASection      from '@/components/CTASection';
+import FooterSection   from '@/components/FooterSection';
+import LenisProvider   from '@/components/LenisProvider';
+import Cursor          from '@/components/Cursor';
 
 export default function Home() {
   return (
-    <>
-      <CustomCursor />
-      <ScrollObserver />
+    <LenisProvider>
+      <Cursor />
+      <div id="grain" aria-hidden="true" />
       <main>
         <HeroSection />
         <MarqueeSection />
@@ -22,6 +22,6 @@ export default function Home() {
         <CTASection />
         <FooterSection />
       </main>
-    </>
+    </LenisProvider>
   );
 }
