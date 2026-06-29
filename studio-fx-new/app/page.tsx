@@ -1,11 +1,9 @@
-import VideoHero   from '@/components/VideoHero';
-import LenisProvider from '@/components/LenisProvider';
+import VideoHero from '@/components/VideoHero';
 
 export default function Home() {
   return (
-    <LenisProvider>
-      <div id="grain" aria-hidden="true" />
+    <main style={{ background: '#000' }}>
       <VideoHero />
-    </LenisProvider>
+    </main>
   );
 }
