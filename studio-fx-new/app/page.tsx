@@ -1,5 +1,6 @@
-import HeroSection     from '@/components/HeroSection';
-import MarqueeSection  from '@/components/MarqueeSection';
+import HeroSection          from '@/components/HeroSection';
+import VideoScrollSection  from '@/components/VideoScrollSection';
+import MarqueeSection      from '@/components/MarqueeSection';
 import WhatWeDoSection from '@/components/WhatWeDoSection';
 import ProofSection    from '@/components/ProofSection';
 import StatsSection    from '@/components/StatsSection';
@@ -15,6 +16,7 @@ export default function Home() {
       <div id="grain" aria-hidden="true" />
       <main>
         <HeroSection />
+        <VideoScrollSection />
         <MarqueeSection />
         <WhatWeDoSection />
         <ProofSection />
