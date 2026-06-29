@@ -1,97 +1,100 @@
-/* ── Design tokens ────────────────────────────────────────────── */
-:root {
-  --bg: #080808;
-  --ink: #ffffff;
-  --red: #E8350A;
-  --muted: rgba(255,255,255,0.4);
-  --hairline: rgba(255,255,255,0.06);
-
-  --font-display: var(--font-anton);
-  --font-body: var(--font-space-grotesk);
-
-  /* adaptive type scale (textura pattern: rem × vw factor) */
-  font-size: clamp(14px, 1.111vw, 16px);
-}
-
-@media (max-width: 1024px) { :root { font-size: clamp(13px, 1.5625vw, 15px); } }
-@media (max-width: 640px)  { :root { font-size: 14px; } }
-
-/* ── Reset ────────────────────────────────────────────────────── */
+/* ─── Reset ─────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; }
+html { height: 100%; scroll-behavior: auto; }
 body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-body), sans-serif;
+  background: #080808;
+  color: #fff;
   overflow-x: hidden;
-  cursor: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 a { color: inherit; text-decoration: none; }
-img, canvas, svg { display: block; }
+img, canvas, svg, video { display: block; }
 
-/* ── Grain overlay (SVG feTurbulence technique) ───────────────── */
-#grain {
-  position: fixed;
-  inset: -50%;
-  width: 200%;
-  height: 200%;
-  pointer-events: none;
-  z-index: 9000;
-  opacity: 0.035;
-  animation: grain-shift 0.5s steps(1) infinite;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 256px 256px;
+/* ─── Font tokens ────────────────────────────────────────────── */
+:root {
+  --font-anton:  var(--font-anton-var);
+  --font-space:  var(--font-space-var);
+  --red:         #E8350A;
+  --dark:        #080808;
 }
 
-@keyframes grain-shift {
-  0%   { transform: translate(0, 0); }
-  10%  { transform: translate(-3%, -4%); }
-  20%  { transform: translate(4%, 2%); }
-  30%  { transform: translate(-2%, 5%); }
-  40%  { transform: translate(5%, -3%); }
-  50%  { transform: translate(-4%, 2%); }
-  60%  { transform: translate(3%, 4%); }
-  70%  { transform: translate(-5%, -2%); }
-  80%  { transform: translate(2%, -4%); }
-  90%  { transform: translate(-3%, 3%); }
-  100% { transform: translate(4%, -1%); }
-}
+/* ─── Cursor ─────────────────────────────────────────────────── */
+* { cursor: none !important; }
 
-/* ── Custom cursor ────────────────────────────────────────────── */
-#cursor-dot, #cursor-ring {
+#cursor-dot {
   position: fixed;
+  top: 0; left: 0;
+  width: 6px; height: 6px;
+  background: #fff;
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, -50%);
-}
-#cursor-dot  { width: 5px; height: 5px; background: white; }
-#cursor-ring {
-  width: 36px; height: 36px;
-  border: 1px solid rgba(255,255,255,0.5);
-  background: transparent;
-  transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s;
-}
-#cursor-ring.active {
-  width: 56px; height: 56px;
-  border-color: white;
   mix-blend-mode: difference;
-  background: white;
+  will-change: transform;
+  transform: translate(-50%,-50%);
+}
+#cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  mix-blend-mode: difference;
+  will-change: transform;
+  transform: translate(-50%,-50%);
+  transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
+}
+#cursor-ring.hovered { width: 56px; height: 56px; border-color: #fff; }
+#cursor-dot.hovered  { width: 8px;  height: 8px; }
+
+@media (max-width: 768px) {
+  * { cursor: auto !important; }
+  #cursor-dot, #cursor-ring { display: none; }
 }
 
-/* ── Spring text clip trick ───────────────────────────────────── */
+/* ─── Grain ──────────────────────────────────────────────────── */
+#grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%; height: 200%;
+  pointer-events: none;
+  z-index: 8000;
+  opacity: 0.04;
+  animation: grain 0.45s steps(1) infinite;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+@keyframes grain {
+  0%   { transform: translate(0,0); }
+  10%  { transform: translate(-3%,-4%); }
+  20%  { transform: translate(4%,2%); }
+  30%  { transform: translate(-2%,5%); }
+  40%  { transform: translate(5%,-3%); }
+  50%  { transform: translate(-4%,2%); }
+  60%  { transform: translate(3%,4%); }
+  70%  { transform: translate(-5%,-2%); }
+  80%  { transform: translate(2%,-4%); }
+  90%  { transform: translate(-3%,3%); }
+  100% { transform: translate(4%,-1%); }
+}
+
+/* ─── Char split ─────────────────────────────────────────────── */
 .char-wrap { display: inline-block; overflow: hidden; vertical-align: bottom; }
-.char      { display: inline-block; will-change: transform, opacity; }
+.char      { display: inline-block; will-change: transform; }
 
-/* ── Sections ─────────────────────────────────────────────────── */
-section { position: relative; overflow: hidden; }
-
-/* ── Mobile ───────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-  body { cursor: auto; }
-  #cursor-dot, #cursor-ring { display: none; }
+/* ─── Preloader ──────────────────────────────────────────────── */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: #080808;
+  z-index: 9990;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  clip-path: inset(0 0 0 0);
 }

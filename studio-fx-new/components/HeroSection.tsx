@@ -1,163 +1,306 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import { useSpring, animated } from '@react-spring/web';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const HeroScene = dynamic(() => import('./HeroScene'), { ssr: false });
+gsap.registerPlugin(ScrollTrigger);
+
+const VERT = `
+uniform float uTime;
+uniform float uSize;
+uniform float uScrollProgress;
+attribute float aScale;
+attribute vec3 aRandomness;
+
+void main() {
+  vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+  float angle = atan(modelPosition.x, modelPosition.z);
+  float distanceToCenter = length(modelPosition.xz);
+  float angleOffset = (1.0 / distanceToCenter) * uTime * 0.15;
+  angle += angleOffset;
+  modelPosition.x = cos(angle) * distanceToCenter;
+  modelPosition.z = sin(angle) * distanceToCenter;
+  modelPosition.x += aRandomness.x * sin(uTime * 0.3 + uScrollProgress);
+  modelPosition.y += aRandomness.y * cos(uTime * 0.2 + uScrollProgress);
+  modelPosition.z += aRandomness.z * sin(uTime * 0.25 + uScrollProgress);
+  vec4 viewPosition = viewMatrix * modelPosition;
+  vec4 projectedPosition = projectionMatrix * viewPosition;
+  gl_Position = projectedPosition;
+  gl_PointSize = uSize * aScale * (1.0 / -viewPosition.z);
+}
+`;
+
+const FRAG = `
+void main() {
+  float distanceToCenter = distance(gl_PointCoord, vec2(0.5));
+  float strength = 0.05 / distanceToCenter - 0.1;
+  gl_FragColor = vec4(1.0, 0.95, 0.95, strength);
+}
+`;
+
+function splitChars(el: HTMLElement) {
+  const text = el.textContent || '';
+  el.innerHTML = text
+    .split('')
+    .map(c =>
+      c === ' '
+        ? ' '
+        : `<span class="char-wrap"><span class="char">${c}</span></span>`
+    )
+    .join('');
+  return el.querySelectorAll<HTMLElement>('.char');
+}
 
 export default function HeroSection() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  const sectionRef = useRef<HTMLElement>(null);
+  const canvasRef  = useRef<HTMLDivElement>(null);
+  const h1Ref      = useRef<HTMLHeadingElement>(null);
+  const h2Ref      = useRef<HTMLHeadingElement>(null);
+  const subRef     = useRef<HTMLParagraphElement>(null);
+  const btnsRef    = useRef<HTMLDivElement>(null);
 
-  const textSpring = useSpring({
-    from: { opacity: 0, y: 40 },
-    to:   { opacity: mounted ? 1 : 0, y: mounted ? 0 : 40 },
-    config: { mass: 1, tension: 140, friction: 40 },
-    delay: 600,
-  });
+  useEffect(() => {
+    const section = sectionRef.current;
+    const wrap    = canvasRef.current;
+    if (!section || !wrap) return;
 
-  const subtitleSpring = useSpring({
-    from: { opacity: 0, y: 20 },
-    to:   { opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 },
-    config: { mass: 1, tension: 140, friction: 40 },
-    delay: 1000,
-  });
+    const isMobile = window.innerWidth < 768;
+    const COUNT    = isMobile ? 2000 : 8000;
 
-  const btnSpring = useSpring({
-    from: { opacity: 0, y: 16 },
-    to:   { opacity: mounted ? 1 : 0, y: mounted ? 0 : 16 },
-    config: { mass: 1, tension: 140, friction: 40 },
-    delay: 1300,
-  });
+    /* ── Three.js setup ─────────────────────────── */
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    wrap.appendChild(renderer.domElement);
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.z = 3;
+
+    /* geometry */
+    const geo = new THREE.BufferGeometry();
+    const pos = new Float32Array(COUNT * 3);
+    const scales = new Float32Array(COUNT);
+    const rand  = new Float32Array(COUNT * 3);
+
+    for (let i = 0; i < COUNT; i++) {
+      const radius = Math.random() * 2;
+      const spinAngle = radius * 5;
+      const branchAngle = (i % 3) * ((Math.PI * 2) / 3);
+      pos[i * 3]     = Math.cos(branchAngle + spinAngle) * radius;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 0.4;
+      pos[i * 3 + 2] = Math.sin(branchAngle + spinAngle) * radius;
+      scales[i]       = Math.random();
+      rand[i * 3]     = (Math.random() - 0.5) * 0.3;
+      rand[i * 3 + 1] = (Math.random() - 0.5) * 0.3;
+      rand[i * 3 + 2] = (Math.random() - 0.5) * 0.3;
+    }
+    geo.setAttribute('position',   new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('aScale',     new THREE.BufferAttribute(scales, 1));
+    geo.setAttribute('aRandomness', new THREE.BufferAttribute(rand, 3));
+
+    const uniforms = {
+      uTime:           { value: 0 },
+      uSize:           { value: 30 * renderer.getPixelRatio() },
+      uScrollProgress: { value: 0 },
+    };
+
+    const mat = new THREE.ShaderMaterial({
+      vertexShader: VERT,
+      fragmentShader: FRAG,
+      uniforms,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+
+    const points = new THREE.Points(geo, mat);
+    scene.add(points);
+
+    /* ── GSAP ScrollTrigger pin ─────────────────── */
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: '+=200%',
+        pin: true,
+        scrub: 1.5,
+        onUpdate(self) {
+          uniforms.uScrollProgress.value = self.progress;
+          camera.position.z = 3 + self.progress * 2;
+        },
+      });
+    }, section);
+
+    /* ── Char split intro ───────────────────────── */
+    const chars1 = h1Ref.current ? splitChars(h1Ref.current) : [];
+    const chars2 = h2Ref.current ? splitChars(h2Ref.current) : [];
+
+    gsap.set([...chars1, ...chars2], { yPercent: 110 });
+    gsap.set([subRef.current, btnsRef.current], { opacity: 0, y: 24 });
+
+    gsap.to([...chars1, ...chars2], {
+      yPercent: 0,
+      duration: 1,
+      stagger: 0.03,
+      ease: 'power3.out',
+      delay: 0.3,
+    });
+    gsap.to([subRef.current, btnsRef.current], {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'power2.out',
+      delay: 1.2,
+    });
+
+    /* ── RAF loop ───────────────────────────────── */
+    let rafId: number;
+    const clock = new THREE.Clock();
+    const tick = () => {
+      rafId = requestAnimationFrame(tick);
+      uniforms.uTime.value = clock.getElapsedTime();
+      renderer.render(scene, camera);
+    };
+    tick();
+
+    /* ── Resize ─────────────────────────────────── */
+    const onResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', onResize);
+      ctx.revert();
+      renderer.dispose();
+      geo.dispose();
+      mat.dispose();
+      wrap.removeChild(renderer.domElement);
+    };
+  }, []);
 
   return (
     <section
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100svh',
-        minHeight: '600px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-      }}
+      ref={sectionRef}
+      style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}
     >
-      <HeroScene count={isMobile ? 500 : 2000} />
+      {/* Canvas */}
+      <div
+        ref={canvasRef}
+        style={{ position: 'absolute', inset: 0, zIndex: 0 }}
+      />
 
       {/* Vignette */}
       <div style={{
         position: 'absolute', inset: 0, zIndex: 1,
-        background: 'radial-gradient(ellipse at center, transparent 40%, rgba(8,8,8,0.85) 100%)',
+        background: 'radial-gradient(ellipse at center, transparent 35%, rgba(8,8,8,0.9) 100%)',
         pointerEvents: 'none',
       }} />
 
       {/* Content */}
       <div style={{
-        position: 'relative', zIndex: 2,
+        position: 'absolute', inset: 0, zIndex: 2,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
         textAlign: 'center', padding: '0 24px',
-        maxWidth: '1000px',
       }}>
-        <animated.p style={{
-          ...textSpring,
-          fontFamily: 'var(--font-space-grotesk)',
-          fontWeight: 300,
-          fontStyle: 'italic',
-          fontSize: '13px',
-          color: 'rgba(255,255,255,0.4)',
-          letterSpacing: '0.35em',
-          textTransform: 'uppercase',
-          marginBottom: '24px',
-        }}>
-          WELCOME.
-        </animated.p>
-
-        <animated.div style={textSpring}>
-          <h1 style={{
-            fontFamily: 'var(--font-anton)',
-            fontSize: 'clamp(56px, 11vw, 120px)',
-            color: '#ffffff',
+        <h1
+          ref={h1Ref}
+          style={{
+            fontFamily: 'var(--font-anton-var), sans-serif',
+            fontSize: 'clamp(64px, 11vw, 128px)',
             lineHeight: 0.88,
-            display: 'block',
             letterSpacing: '-0.01em',
-          }}>
-            WE BUILD AI
-          </h1>
-          <h1 style={{
-            fontFamily: 'var(--font-anton)',
-            fontSize: 'clamp(56px, 11vw, 120px)',
-            WebkitTextStroke: '1.5px rgba(255,255,255,0.9)',
+            color: '#fff',
+          }}
+        >
+          STOP BLEEDING
+        </h1>
+        <h1
+          ref={h2Ref}
+          style={{
+            fontFamily: 'var(--font-anton-var), sans-serif',
+            fontSize: 'clamp(64px, 11vw, 128px)',
+            lineHeight: 0.88,
+            letterSpacing: '-0.01em',
+            WebkitTextStroke: '1.5px rgba(255,255,255,0.85)',
             color: 'transparent',
-            lineHeight: 0.88,
-            display: 'block',
-            marginBottom: '36px',
-            letterSpacing: '-0.01em',
-          }}>
-            INFRASTRUCTURE
-          </h1>
-        </animated.div>
+            marginBottom: 40,
+          }}
+        >
+          REVENUE.
+        </h1>
 
-        <animated.p style={{
-          ...subtitleSpring,
-          fontFamily: 'var(--font-space-grotesk)',
-          fontWeight: 300,
-          fontSize: '14px',
-          color: 'rgba(255,255,255,0.45)',
-          marginBottom: '44px',
-          letterSpacing: '0.02em',
-        }}>
-          For businesses that refuse to be left behind.
-        </animated.p>
+        <p
+          ref={subRef}
+          style={{
+            fontFamily: 'var(--font-space-var), sans-serif',
+            fontSize: 15,
+            fontWeight: 300,
+            color: 'rgba(255,255,255,0.5)',
+            maxWidth: 480,
+            marginBottom: 48,
+            lineHeight: 1.6,
+          }}
+        >
+          We find where your business bleeds time and money. Then we seal every gap — automatically.
+        </p>
 
-        <animated.div style={btnSpring}>
+        <div ref={btnsRef} style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
           <a
             href="#cta"
-            data-magnetic
+            data-cursor
             style={{
               display: 'inline-block',
-              border: '1px solid rgba(255,255,255,0.18)',
-              color: 'white',
-              fontFamily: 'var(--font-space-grotesk)',
-              fontWeight: 400,
-              fontSize: '13px',
-              letterSpacing: '0.06em',
+              background: '#E8350A',
+              color: '#fff',
+              fontFamily: 'var(--font-space-var), sans-serif',
+              fontSize: 13,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
               padding: '16px 44px',
-              borderRadius: '100px',
-              transition: 'background 0.4s cubic-bezier(0.16,1,0.3,1), color 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s',
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLElement;
-              el.style.background = 'white';
-              el.style.color = '#080808';
-              el.style.borderColor = 'white';
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLElement;
-              el.style.background = 'transparent';
-              el.style.color = 'white';
-              el.style.borderColor = 'rgba(255,255,255,0.18)';
+              borderRadius: 2,
             }}
           >
             Book a free call
           </a>
-        </animated.div>
+          <a
+            href="#problem"
+            data-cursor
+            style={{
+              display: 'inline-block',
+              border: '1px solid rgba(255,255,255,0.18)',
+              color: '#fff',
+              fontFamily: 'var(--font-space-var), sans-serif',
+              fontSize: 13,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              padding: '16px 44px',
+              borderRadius: 2,
+            }}
+          >
+            See how it works
+          </a>
+        </div>
       </div>
 
-      {/* Scroll indicator */}
-      <animated.div style={{
-        ...btnSpring,
-        position: 'absolute', bottom: '40px', left: '50%',
+      {/* Scroll hint */}
+      <div style={{
+        position: 'absolute', bottom: 40, left: '50%',
         transform: 'translateX(-50%)', zIndex: 2,
       }}>
         <div style={{
-          width: '1px', height: '56px',
-          background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.3))',
-          margin: '0 auto',
+          width: 1, height: 56,
+          background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.25))',
         }} />
-      </animated.div>
+      </div>
     </section>
   );
 }

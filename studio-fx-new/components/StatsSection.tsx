@@ -1,7 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useSpring, animated } from '@react-spring/web';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
   { value: '60s',  label: 'Average response time' },
@@ -10,66 +13,31 @@ const stats = [
   { value: 'Free', label: 'First call' },
 ];
 
-function useInView() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setInView(true); obs.disconnect(); }
-    }, { threshold: 0.2 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return { ref, inView };
-}
-
-function StatItem({ stat, index }: { stat: typeof stats[0]; index: number }) {
-  const { ref, inView } = useInView();
-  const spring = useSpring({
-    opacity: inView ? 1 : 0,
-    y: inView ? 0 : 28,
-    config: { mass: 1, tension: 200, friction: 38 },
-    delay: index * 100,
-  });
-
-  return (
-    <animated.div
-      ref={ref}
-      style={{
-        ...spring,
-        textAlign: 'center',
-        padding: '0 24px',
-        borderRight: index < stats.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-      }}
-    >
-      <p style={{
-        fontFamily: 'var(--font-anton)',
-        fontSize: 'clamp(44px, 5.5vw, 80px)',
-        color: 'white',
-        lineHeight: 1,
-        marginBottom: '10px',
-        letterSpacing: '-0.02em',
-      }}>
-        {stat.value}
-      </p>
-      <p style={{
-        fontFamily: 'var(--font-space-grotesk)',
-        fontSize: '10px',
-        color: 'rgba(255,255,255,0.35)',
-        letterSpacing: '0.22em',
-        textTransform: 'uppercase',
-      }}>
-        {stat.label}
-      </p>
-    </animated.div>
-  );
-}
-
 export default function StatsSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const items = section.querySelectorAll<HTMLElement>('.stat-item');
+    const ctx = gsap.context(() => {
+      gsap.from(items, {
+        opacity: 0,
+        y: 32,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 75%',
+        },
+      });
+    }, section);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section style={{
+    <section ref={sectionRef} style={{
       background: '#080808',
       borderTop: '1px solid rgba(255,255,255,0.05)',
       borderBottom: '1px solid rgba(255,255,255,0.05)',
@@ -84,7 +52,33 @@ export default function StatsSection() {
           gridTemplateColumns: 'repeat(4, 1fr)',
         }}
       >
-        {stats.map((s, i) => <StatItem key={s.label} stat={s} index={i} />)}
+        {stats.map((s, i) => (
+          <div
+            key={s.label}
+            className="stat-item"
+            style={{
+              textAlign: 'center',
+              padding: '0 24px',
+              borderRight: i < stats.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+            }}
+          >
+            <p style={{
+              fontFamily: 'var(--font-anton-var), sans-serif',
+              fontSize: 'clamp(44px, 5.5vw, 80px)',
+              color: '#fff',
+              lineHeight: 1,
+              marginBottom: 10,
+              letterSpacing: '-0.02em',
+            }}>{s.value}</p>
+            <p style={{
+              fontFamily: 'var(--font-space-var), sans-serif',
+              fontSize: 10,
+              color: 'rgba(255,255,255,0.35)',
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+            }}>{s.label}</p>
+          </div>
+        ))}
       </div>
       <style>{`
         @media (max-width: 700px) {
