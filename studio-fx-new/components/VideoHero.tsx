@@ -21,16 +21,33 @@ export default function VideoHero() {
     const video   = videoRef.current;
     if (!wrapper || !video) return;
 
+    let targetTime = 0;
+    let rafId: number;
+
+    // Scroll only writes the target — never seeks directly
     const onScroll = () => {
       if (!video.duration) return;
       const top      = wrapper.offsetTop;
       const range    = wrapper.offsetHeight - window.innerHeight;
       const progress = Math.max(0, Math.min(1, (window.scrollY - top) / range));
-      video.currentTime = progress * video.duration;
+      targetTime = progress * video.duration;
+    };
+
+    // rAF loop does the actual seek — once per frame maximum
+    const tick = () => {
+      if (Math.abs(video.currentTime - targetTime) > 0.01) {
+        video.currentTime = targetTime;
+      }
+      rafId = requestAnimationFrame(tick);
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    rafId = requestAnimationFrame(tick);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   return (
