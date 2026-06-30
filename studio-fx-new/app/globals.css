@@ -1,25 +1,44 @@
-/* ─── Reset ─────────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; scroll-behavior: auto; }
+/* ─── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  scroll-behavior: auto;
+  /* Prevent horizontal overflow from horizontal Process section */
+  overflow-x: hidden;
+}
+
 body {
   background: #080808;
   color: #fff;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1;
 }
+
 a { color: inherit; text-decoration: none; }
-img, canvas, svg, video { display: block; }
+img, canvas, svg, video { display: block; max-width: 100%; }
+button { border: none; background: none; cursor: none; }
 
 /* ─── Font tokens ────────────────────────────────────────────── */
 :root {
-  --font-anton:  var(--font-anton-var);
-  --font-space:  var(--font-space-var);
-  --red:         #E8350A;
-  --dark:        #080808;
+  --font-anton:      var(--font-anton-var);
+  --font-space:      var(--font-space-var);
+  --red:             #E8350A;
+  --dark:            #080808;
+  --dark-2:          #0c0c0c;
+  --white-dim:       rgba(255,255,255,0.45);
+  --white-faint:     rgba(255,255,255,0.1);
+  --border-faint:    rgba(255,255,255,0.05);
 }
 
-/* ─── Cursor ─────────────────────────────────────────────────── */
+/* ─── Custom cursor ──────────────────────────────────────────── */
 * { cursor: none !important; }
 
 #cursor-dot {
@@ -32,21 +51,24 @@ img, canvas, svg, video { display: block; }
   z-index: 9999;
   mix-blend-mode: difference;
   will-change: transform;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease;
 }
+
 #cursor-ring {
   position: fixed;
   top: 0; left: 0;
   width: 36px; height: 36px;
-  border: 1px solid rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.5);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
   mix-blend-mode: difference;
   will-change: transform;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
 }
+
 #cursor-ring.hovered { width: 56px; height: 56px; border-color: #fff; }
 #cursor-dot.hovered  { width: 8px;  height: 8px; }
 
@@ -55,18 +77,20 @@ img, canvas, svg, video { display: block; }
   #cursor-dot, #cursor-ring { display: none; }
 }
 
-/* ─── Grain ──────────────────────────────────────────────────── */
+/* ─── Film grain overlay ─────────────────────────────────────── */
 #grain {
   position: fixed;
   inset: -50%;
   width: 200%; height: 200%;
   pointer-events: none;
   z-index: 8000;
-  opacity: 0.04;
+  opacity: 0.035;
   animation: grain 0.45s steps(1) infinite;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 256px 256px;
+  will-change: transform;
 }
+
 @keyframes grain {
   0%   { transform: translate(0,0); }
   10%  { transform: translate(-3%,-4%); }
@@ -81,9 +105,18 @@ img, canvas, svg, video { display: block; }
   100% { transform: translate(4%,-1%); }
 }
 
-/* ─── Char split ─────────────────────────────────────────────── */
-.char-wrap { display: inline-block; overflow: hidden; vertical-align: bottom; }
-.char      { display: inline-block; will-change: transform; }
+/* ─── Character / word split helpers ────────────────────────── */
+.char-wrap,
+.word-wrap {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.char,
+.word {
+  display: inline-block;
+  will-change: transform;
+}
 
 /* ─── Preloader ──────────────────────────────────────────────── */
 #preloader {
@@ -95,6 +128,28 @@ img, canvas, svg, video { display: block; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 40px;
-  clip-path: inset(0 0 0 0);
+  gap: 32px;
+}
+
+/* ─── Utility ────────────────────────────────────────────────── */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Mobile section overrides ───────────────────────────────── */
+@media (max-width: 768px) {
+  /* Pinned sections should not pin on mobile — too awkward */
+  /* ScrollTrigger will handle this via its own responsive logic */
+}
+
+/* ─── Selection ──────────────────────────────────────────────── */
+::selection {
+  background: #E8350A;
+  color: #fff;
 }
