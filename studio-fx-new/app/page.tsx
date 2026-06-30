@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const Preloader       = dynamic(() => import('@/components/Preloader'),       { ssr: false });
+const Nav             = dynamic(() => import('@/components/Nav'),             { ssr: false });
 const Cursor          = dynamic(() => import('@/components/Cursor'),          { ssr: false });
 const HeroSection     = dynamic(() => import('@/components/HeroSection'),     { ssr: false });
 const MarqueeSection  = dynamic(() => import('@/components/MarqueeSection'),  { ssr: false });
@@ -62,6 +63,9 @@ export default function Home() {
     <>
       {/* Film grain overlay */}
       <div id="grain" aria-hidden="true" />
+
+      {/* Navigation */}
+      <Nav />
 
       {/* Custom cursor (no-op on touch) */}
       <Cursor />
