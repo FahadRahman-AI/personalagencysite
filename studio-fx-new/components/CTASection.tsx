@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
+import { splitChars } from '@/lib/splitText';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -51,18 +52,24 @@ export default function CTASection() {
     };
     tick();
 
-    /* text reveal */
+    /* char split on headline */
+    const chars = headRef.current ? splitChars(headRef.current) : [];
+    gsap.set(chars, { yPercent: 110 });
+
     const ctx = gsap.context(() => {
-      gsap.from([headRef.current, subRef.current, btnRef.current], {
-        opacity: 0,
-        y: 40,
+      gsap.to(chars, {
+        yPercent: 0,
         duration: 1,
-        stagger: 0.15,
-        ease: 'power3.out',
+        stagger: 0.022,
+        ease: 'power4.out',
         scrollTrigger: {
           trigger: section,
           start: 'top 70%',
         },
+      });
+      gsap.from([subRef.current, btnRef.current], {
+        opacity: 0, y: 32, duration: 0.9, stagger: 0.12, ease: 'power2.out',
+        scrollTrigger: { trigger: section, start: 'top 60%' },
       });
     }, section);
 
