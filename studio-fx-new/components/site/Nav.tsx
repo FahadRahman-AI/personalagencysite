@@ -9,12 +9,12 @@
 import { useEffect, useState } from 'react';
 import { setSoundEnabled } from '@/lib/site/audio';
 
-const CONTACT = 'mailto:hello@studiofx.co?subject=Project%20enquiry';
+const CONTACT = '/contact';
 
 const LINKS = [
-  { n: '01', label: 'Work', href: '#work' },
-  { n: '02', label: 'Services', href: '#services' },
-  { n: '03', label: 'Client stories', href: '#stories' },
+  { n: '01', label: 'Work', href: '/#work' },
+  { n: '02', label: 'Services', href: '/#services' },
+  { n: '03', label: 'Client stories', href: '/#stories' },
   { n: '04', label: 'Contact', href: CONTACT },
 ];
 
@@ -39,7 +39,7 @@ export default function Nav() {
   return (
     <>
       <header className="nav">
-        <a href="#top" className="navBrand" data-hover aria-label="Studio FX home">
+        <a href="/" className="navBrand" data-hover aria-label="Studio FX home">
           <svg viewBox="0 0 26 26" className="navMark" aria-hidden>
             <path d="M3 23 L13 3 L16.5 10 L10 23 Z" fill="currentColor" />
             <path d="M14 23 L20.5 10 L23 15 L19 23 Z" fill="currentColor" opacity="0.72" />

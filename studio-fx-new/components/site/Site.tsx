@@ -17,6 +17,7 @@ import Cursor from './Cursor';
 import Hero from './sections/Hero';
 import About from './sections/About';
 import Marquee from './sections/Marquee';
+import Showreel from './sections/Showreel';
 import KeyFacts from './sections/KeyFacts';
 import Work from './sections/Work';
 import Engine from './sections/Engine';
@@ -133,6 +134,7 @@ export default function Site() {
         <Hero />
         <About />
         <Marquee />
+        <Showreel />
         <KeyFacts />
         <Work />
         <Engine />

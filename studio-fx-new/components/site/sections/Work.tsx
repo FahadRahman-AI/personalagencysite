@@ -21,6 +21,8 @@ const CASES = [
     desc: 'Enquiry engine & client intake automation.',
     meta: 'LEAD ENGINE — 2026',
     initial: 'M',
+    n: '001',
+    t: '00:38',
   },
   {
     id: 'northgate',
@@ -28,6 +30,8 @@ const CASES = [
     desc: '24/7 lead capture that never lets a quote request die.',
     meta: 'AUTOMATION — 2026',
     initial: 'N',
+    n: '002',
+    t: '00:52',
   },
   {
     id: 'kado',
@@ -35,6 +39,8 @@ const CASES = [
     desc: 'Intelligent website with live booking and follow-up flows.',
     meta: 'INTELLIGENT WEB — 2025',
     initial: 'K',
+    n: '003',
+    t: '01:14',
   },
 ];
 
@@ -110,6 +116,9 @@ export default function Work() {
               <span className="workInitial">{c.initial}</span>
               <span className="workCoverRows" aria-hidden />
               <span className="workCoverChip" aria-hidden />
+              <span className="workCoverHud" aria-hidden>
+                {c.n} · {c.t}
+              </span>
             </div>
             <div className="workMetaRow">
               <div>

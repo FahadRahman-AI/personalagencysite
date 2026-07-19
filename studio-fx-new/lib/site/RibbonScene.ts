@@ -18,17 +18,33 @@ const PALETTES: { bg: string; ink: string; accent: string }[] = [
   { bg: '#101820', ink: '#dfe6ee', accent: '#7fe9ff' },
 ];
 
+/* Plain-spoken, outcome-first: owners buy missed-calls-answered and
+   more customers, not "ops integration". */
 const TITLES = [
-  'INTAKE FLOW',
-  'OPS CONSOLE',
-  'AI CONCIERGE',
-  'QUOTE ENGINE',
-  'NIGHT SHIFT',
-  'DISPATCH',
-  'PIPELINE',
-  'CONTROL ROOM',
-  'SIGNAL',
-  'BOOKING UI',
+  'EVERY LEAD CAPTURED',
+  'BOOKED WHILE YOU SLEEP',
+  'NEVER MISS A CALL',
+  'QUOTES ON AUTOPILOT',
+  'BUSINESS ON RAILS',
+  'SITES THAT SELL',
+  'AI INFRASTRUCTURE',
+  'FOLLOW-UP THAT STICKS',
+  'ANSWERS IN SECONDS',
+  'ONLINE BOOKING',
+];
+
+/** Per-card taglines under the title. */
+const SUBS = [
+  'NO ENQUIRY LEFT BEHIND',
+  'YOUR CALENDAR FILLS ITSELF',
+  'EVERY ENQUIRY ANSWERED, 24/7',
+  'PRICED RIGHT, SENT IN MINUTES',
+  'ADMIN THAT RUNS ITSELF',
+  'TURN VISITORS INTO CUSTOMERS',
+  'THE ENGINE BEHIND YOUR BUSINESS',
+  'NO LEAD GOES QUIET',
+  'CUSTOMERS NEVER WAIT',
+  'FROM CLICK TO CONFIRMED',
 ];
 
 function makePoster(i: number, displayFont: string, monoFont: string): HTMLCanvasElement {
@@ -103,13 +119,19 @@ function makePoster(i: number, displayFont: string, monoFont: string): HTMLCanva
   ctx.fillStyle = pal.accent;
   ctx.fillRect(40, H - 176, 46, 20);
 
-  // Title
+  // Title — shrink to fit the poster's safe width for long names
+  const title = TITLES[i % TITLES.length];
   ctx.fillStyle = pal.ink;
-  ctx.font = `600 52px ${displayFont}`;
-  ctx.fillText(TITLES[i % TITLES.length], 40, H - 96);
+  let titleSize = 52;
+  ctx.font = `600 ${titleSize}px ${displayFont}`;
+  while (ctx.measureText(title).width > W - 80 && titleSize > 30) {
+    titleSize -= 2;
+    ctx.font = `600 ${titleSize}px ${displayFont}`;
+  }
+  ctx.fillText(title, 40, H - 96);
   ctx.font = `300 18px ${monoFont}`;
   ctx.globalAlpha = 0.6;
-  ctx.fillText('STUDIO FX — SYSTEM EXPLORATION', 40, H - 52);
+  ctx.fillText(SUBS[i % SUBS.length], 40, H - 52);
   ctx.globalAlpha = 1;
 
   return c;
