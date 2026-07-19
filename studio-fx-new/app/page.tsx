@@ -1,9 +1,5 @@
-import VideoHero from '@/components/VideoHero';
+import Site from '@/components/site/Site';
 
 export default function Home() {
-  return (
-    <main style={{ background: '#000' }}>
-      <VideoHero />
-    </main>
-  );
+  return <Site />;
 }
