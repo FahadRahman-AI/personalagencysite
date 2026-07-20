@@ -1,21 +1,49 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Familjen_Grotesk, Martian_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/* Display — warm grotesk for headlines (Trionn's actual H1 face, open source) */
+const familjen = Familjen_Grotesk({
+  variable: "--font-display",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+/* Mono — technical labels, CTAs, data (also Trionn's actual mono, open source) */
+const martian = Martian_Mono({
+  weight: ["300", "400"],
+  variable: "--font-mono",
   subsets: ["latin"],
+});
+
+/* Body — Switzer, the Neue Haas Display role (Fontshare, free license) */
+const switzer = localFont({
+  variable: "--font-body",
+  src: [
+    { path: "./fonts/Switzer-Light.woff2", weight: "300", style: "normal" },
+    { path: "./fonts/Switzer-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/Switzer-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/Switzer-Semibold.woff2", weight: "600", style: "normal" },
+  ],
+});
+
+/* Serif accent — Zodiak italic, the PP Editorial New role (Fontshare, free) */
+const zodiak = localFont({
+  variable: "--font-serif",
+  src: [
+    { path: "./fonts/Zodiak-LightItalic.woff2", weight: "300", style: "italic" },
+    { path: "./fonts/Zodiak-Italic.woff2", weight: "400", style: "italic" },
+  ],
 });
 
 export const metadata: Metadata = {
-  title: "STUDIO FX — Websites · AI Automation · Cinematic Content",
+  title: "Studio FX® — AI Infrastructure Studio",
   description:
-    "STUDIO FX builds websites, AI automation, and cinematic content for businesses in Birmingham and worldwide.",
+    "Studio FX is an AI infrastructure studio building lead engines, workflow systems and intelligent websites — built for clarity, speed and scale.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#040508",
 };
 
 export default function RootLayout({
@@ -26,9 +54,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      data-theme="dark"
+      className={`${familjen.variable} ${martian.variable} ${switzer.variable} ${zodiak.variable}`}
     >
-      <body className="min-h-full">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
