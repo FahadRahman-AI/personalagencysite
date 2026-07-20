@@ -818,21 +818,21 @@ html.hasCursor button {
 .workCase:hover .workInitial { transform: scale(1.08) rotate(-2deg); }
 
 /* Art-directed placeholder covers — replace with real imagery */
-.workCover-meridian {
+.workCover-lead {
   background:
     radial-gradient(70% 90% at 70% 20%, rgba(127, 233, 255, 0.16), transparent 55%),
     linear-gradient(160deg, #0e1420 20%, #17202e 80%);
   color: #dfe6ee;
 }
 
-.workCover-northgate {
+.workCover-workflow {
   background:
     radial-gradient(80% 100% at 30% 90%, rgba(255, 90, 38, 0.24), transparent 60%),
     #ded9d0;
   color: #17181c;
 }
 
-.workCover-kado {
+.workCover-site {
   background:
     radial-gradient(90% 80% at 80% 80%, rgba(255, 95, 210, 0.14), transparent 55%),
     linear-gradient(200deg, #17161a, #232028);

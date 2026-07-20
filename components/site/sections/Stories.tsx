@@ -8,36 +8,36 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const CONTACT = 'mailto:hello@studiofx.co?subject=Become%20a%20client';
+const CONTACT = 'mailto:hello@studiofx.co?subject=Start%20a%20project';
 
 const STORIES = [
   {
-    client: 'MERIDIAN LEGAL',
+    client: 'LEGAL FIRMS',
     quote:
-      'Enquiries used to sit overnight and die there. Now every message is answered before I even see it, and the calendar fills itself.',
-    author: 'Managing Partner',
-    firm: 'Meridian Legal',
+      'Enquiries sit overnight and die there. A lead engine changes that — every message answered before anyone at the firm sees it, the calendar filling itself, no matter lost.',
+    author: 'Lead engine + intake automation',
+    firm: 'Legal firms',
   },
   {
-    client: 'NORTHGATE ROOFING',
+    client: 'TRADES BUSINESSES',
     quote:
-      'We stopped losing quotes to slow replies within the first week. The system chases, books and reminds — we just show up.',
-    author: 'Director',
-    firm: 'Northgate Roofing',
+      'Losing quotes to slow replies is the most expensive thing a trades business does. An automated system chases, books and reminds — the crew just shows up.',
+    author: 'Quote automation + follow-up',
+    firm: 'Trades businesses',
   },
   {
-    client: 'KADO INTERIORS',
+    client: 'DESIGN STUDIOS',
     quote:
-      'The site talks to clients like our best consultant does. Bookings happen at midnight. It genuinely runs without us.',
-    author: 'Founder',
-    firm: 'Kado Interiors',
+      'A site that talks to enquiries like your best consultant. Project briefs are qualified, calls are booked, follow-ups go out — at midnight, on weekends, without anyone lifting a finger.',
+    author: 'Intelligent website + booking flow',
+    firm: 'Design studios',
   },
   {
-    client: 'ATLAS DENTAL',
+    client: 'MEDICAL PRACTICES',
     quote:
-      'Recalls, reminders, follow-ups — all of it just happens now. The front desk finally works on patients, not paperwork.',
-    author: 'Practice Manager',
-    firm: 'Atlas Dental',
+      'Recalls, reminders, follow-ups — running automatically. The front desk works on patients, not paperwork. Nothing falls through the gap.',
+    author: 'Workflow automation + patient comms',
+    firm: 'Medical practices',
   },
 ];
 
@@ -62,11 +62,11 @@ export default function Stories() {
   return (
     <section className="stories" data-theme-section="light" id="stories">
       <header className="sectionHead storiesHead">
-        <h2 className="sectionTitle">Client stories</h2>
+        <h2 className="sectionTitle">The shift</h2>
         <p className="sectionSub">
-          Great work is built through
+          Here&rsquo;s exactly what changes
           <br />
-          partnership. Here&rsquo;s what our clients say.
+          when the automation goes live.
         </p>
       </header>
 
@@ -80,7 +80,7 @@ export default function Stories() {
           </button>
         </div>
         <a href={CONTACT} className="monoCta" data-hover>
-          BECOME A CLIENT <span className="monoCtaArrow">→</span>
+          BE FIRST TO BUILD <span className="monoCtaArrow">→</span>
         </a>
       </div>
 

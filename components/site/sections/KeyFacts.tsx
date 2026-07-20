@@ -98,11 +98,11 @@ export default function KeyFacts() {
   return (
     <section ref={rootRef} className="keyFacts" data-theme-section="light">
       <header className="sectionHead">
-        <h2 className="sectionTitle">Key facts</h2>
+        <h2 className="sectionTitle">What to expect</h2>
         <p className="sectionSub">
-          A snapshot of what the engine
+          Outcomes the system is designed
           <br />
-          does once it&rsquo;s switched on.
+          to deliver from day one.
         </p>
       </header>
 

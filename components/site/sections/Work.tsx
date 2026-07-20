@@ -16,29 +16,29 @@ const CONTACT = 'mailto:hello@studiofx.co?subject=Show%20me%20the%20case%20studi
 
 const CASES = [
   {
-    id: 'meridian',
-    name: 'Meridian Legal',
-    desc: 'Enquiry engine & client intake automation.',
-    meta: 'LEAD ENGINE — 2026',
-    initial: 'M',
+    id: 'lead',
+    name: 'Lead Engine',
+    desc: 'Every enquiry captured, answered inside a minute, followed up until it books or declines.',
+    meta: 'LEAD CAPTURE — AVAILABLE NOW',
+    initial: 'L',
     n: '001',
     t: '00:38',
   },
   {
-    id: 'northgate',
-    name: 'Northgate Roofing',
-    desc: '24/7 lead capture that never lets a quote request die.',
-    meta: 'AUTOMATION — 2026',
-    initial: 'N',
+    id: 'workflow',
+    name: 'Workflow OS',
+    desc: 'Quotes, reminders, handoffs — the entire admin stack wired to run end-to-end without you.',
+    meta: 'AUTOMATION — AVAILABLE NOW',
+    initial: 'W',
     n: '002',
     t: '00:52',
   },
   {
-    id: 'kado',
-    name: 'Kado Interiors',
-    desc: 'Intelligent website with live booking and follow-up flows.',
-    meta: 'INTELLIGENT WEB — 2025',
-    initial: 'K',
+    id: 'site',
+    name: 'Intelligent Site',
+    desc: 'A website that qualifies visitors, books appointments and follows up — every hour, on its own.',
+    meta: 'INTELLIGENT WEB — AVAILABLE NOW',
+    initial: 'I',
     n: '003',
     t: '01:14',
   },
@@ -71,12 +71,12 @@ export default function Work() {
   }, []);
 
   const CLIENTS = [
-    'MERIDIAN LEGAL',
-    'NORTHGATE ROOFING',
-    'KADO INTERIORS',
-    'ATLAS DENTAL',
-    'FERN STUDIO',
-    'HALE & CO',
+    'AI AUTOMATION',
+    'LEAD ENGINES',
+    'INTELLIGENT WEBSITES',
+    'WORKFLOW SYSTEMS',
+    'AI INFRASTRUCTURE',
+    'ONLINE BOOKING',
   ];
 
   return (
@@ -93,14 +93,14 @@ export default function Work() {
 
       <header className="sectionHead workHead">
         <h2 className="sectionTitle">
-          Selected work
+          What we
           <br />
-          &amp; explorations
+          build
         </h2>
         <p className="sectionSub">
-          Systems shipped for businesses that
+          Systems ready to deploy.
           <br />
-          were done losing to their own inbox.
+          Enquiries in, customers out.
         </p>
       </header>
 
@@ -110,7 +110,7 @@ export default function Work() {
             key={c.id}
             href={CONTACT}
             className={`workCase workCase-${i}`}
-            data-cursor-label="VIEW"
+            data-cursor-label="ENQUIRE"
           >
             <div className={`workCover workCover-${c.id}`}>
               <span className="workInitial">{c.initial}</span>
@@ -125,7 +125,7 @@ export default function Work() {
                 <h3 className="workName">{c.name}</h3>
                 <p className="workDesc">{c.desc}</p>
                 <span className="monoCta workExplore">
-                  EXPLORE PROJECT <span className="monoCtaArrow">→</span>
+                  ENQUIRE ABOUT THIS <span className="monoCtaArrow">→</span>
                 </span>
               </div>
               <span className="workMeta">{c.meta}</span>
@@ -135,12 +135,12 @@ export default function Work() {
 
         <div className="workMore">
           <p>
-            Discover our complete collection
+            Ready to be the first business
             <br />
-            of engines, systems, and platforms.
+            we build this engine for?
           </p>
           <a href={CONTACT} className="monoCta" data-hover>
-            VIEW ALL PROJECTS <span className="monoCtaArrow">→</span>
+            START A PROJECT <span className="monoCtaArrow">→</span>
           </a>
         </div>
       </div>
