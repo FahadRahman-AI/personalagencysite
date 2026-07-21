@@ -19,7 +19,7 @@ import About from './sections/About';
 import Marquee from './sections/Marquee';
 import Showreel from './sections/Showreel';
 import KeyFacts from './sections/KeyFacts';
-import Work from './sections/Work';
+import FoundingOffer from './sections/FoundingOffer';
 import Engine from './sections/Engine';
 import Stories from './sections/Stories';
 import Ribbon from './sections/Ribbon';
@@ -136,7 +136,7 @@ export default function Site() {
         <Marquee />
         <Showreel />
         <KeyFacts />
-        <Work />
+        <FoundingOffer />
         <Engine />
         <Stories />
         <Ribbon />
