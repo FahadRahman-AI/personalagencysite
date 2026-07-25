@@ -1,9 +1,8 @@
 'use client';
 
 /**
- * Selected work — light. Art-directed placeholder covers built in
- * pure CSS until real case imagery lands.
- * TODO(studio-fx): replace CASES with real projects + screenshots.
+ * Capability cards — light. Art-directed covers per service type.
+ * Replace with real project imagery when case studies land.
  */
 
 import { useEffect, useRef } from 'react';
@@ -12,7 +11,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CONTACT = 'mailto:hello@studiofx.co?subject=Show%20me%20the%20case%20studies';
+const CONTACT = 'mailto:fahadrahman9819@gmail.com?subject=Show%20me%20the%20case%20studies';
 
 const CASES = [
   {

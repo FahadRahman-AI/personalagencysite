@@ -1,0 +1,25 @@
+{
+  "name": "studio-fx-outreach-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "description": "Autonomous daily outreach agent for Studio FX — finds businesses, personalises emails, sends them, follows up.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "once": "node src/index.js --once",
+    "outreach": "node src/index.js --outreach-only",
+    "followups": "node src/index.js --followups-only"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0",
+    "@supabase/supabase-js": "^2.45.4",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "resend": "^4.0.1"
+  }
+}

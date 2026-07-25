@@ -3,9 +3,8 @@
  *
  * Poster cards arranged on a cylindrical arc, rotated by scroll.
  * Card artwork is generated at runtime on 2D canvases (typographic
- * posters using the site's real fonts) — swap for real work shots
- * by replacing makePoster() output with loaded textures.
- * TODO(studio-fx): replace generated posters with real project art.
+ * posters using the site's real fonts). Replace makePoster() output
+ * with loaded textures when real project imagery is ready.
  */
 
 import * as THREE from 'three';

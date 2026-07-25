@@ -1,0 +1,18 @@
+# Railway deployment config — long-running service that runs node-cron internally.
+# https://docs.railway.app/reference/config-as-code
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm install --omit=dev"
+
+[deploy]
+startCommand = "npm start"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+# No healthcheck — this is a cron worker, not an HTTP service.
+
+# ── Alternative deploy mode ───────────────────────────────────────────────
+# If you'd rather use Railway's own scheduler instead of node-cron, set
+# startCommand to `npm run once`, then attach a Railway Cron schedule of
+# `0 9 * * *` in the dashboard (Europe/London) and run as a cron job
+# instead of a long-running service.

@@ -1,14 +1,13 @@
 'use client';
 
 /**
- * Client stories — light testimonial carousel. Client rail on the
- * left drives the active quote; arrows and a timer both advance it.
- * TODO(studio-fx): swap placeholder quotes for real client words.
+ * Industry outcome carousel — light. Client rail on the left drives
+ * the active scenario; arrows and a timer both advance it.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const CONTACT = 'mailto:hello@studiofx.co?subject=Start%20a%20project';
+const CONTACT = 'mailto:fahadrahman9819@gmail.com?subject=Start%20a%20project';
 
 const STORIES = [
   {

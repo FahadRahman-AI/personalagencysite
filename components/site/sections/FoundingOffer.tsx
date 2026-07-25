@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CONTACT = 'mailto:hello@studiofx.co?subject=Founding%20Build%20Application';
+const CONTACT = 'mailto:fahadrahman9819@gmail.com?subject=Founding%20Build%20Application';
 
 const RECEIVE = [
   '24/7 lead engine — every enquiry captured and answered inside a minute',

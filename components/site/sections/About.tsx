@@ -11,7 +11,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CONTACT = 'mailto:hello@studiofx.co?subject=About%20Studio%20FX';
+const CONTACT = 'mailto:fahadrahman9819@gmail.com?subject=About%20Studio%20FX';
 
 const STATEMENT =
   'Studio FX is an independent AI studio crafting lead engines, workflow systems and intelligent websites through strategy, design, and technology.';

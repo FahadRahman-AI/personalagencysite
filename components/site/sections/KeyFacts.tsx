@@ -3,7 +3,6 @@
 /**
  * Key facts — first light beat. Tilted panels drifting on parallax,
  * numerals counting up when they enter.
- * TODO(studio-fx): swap placeholder metrics for real client numbers.
  */
 
 import { useEffect, useRef } from 'react';

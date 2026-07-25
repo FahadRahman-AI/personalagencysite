@@ -103,7 +103,7 @@ export default function ContactPage() {
               {sent ? 'SUCCESS!' : 'GET MY AUTOMATION PLAN'}
             </button>
             <p className={sent ? 'contactConfirm contactConfirmOn' : 'contactConfirm'} role="status">
-              Brief received. We&rsquo;ll reply from hello@studiofx.co within one working day.
+              Brief received. We&rsquo;ll reply within one working day.
             </p>
           </div>
         </form>

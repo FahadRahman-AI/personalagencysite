@@ -136,7 +136,7 @@ export default function Engine() {
             <span className="engineNoteDot" /> BUILT WITH INTENT. WIRED TO WORK.
           </p>
           <a
-            href="mailto:hello@studiofx.co?subject=Services"
+            href="mailto:fahadrahman9819@gmail.com?subject=Services"
             className="monoCta typoLink"
             data-hover
           >

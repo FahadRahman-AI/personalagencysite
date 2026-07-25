@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MonogramScene } from '@/lib/site/MonogramScene';
 import HeroLines from '../HeroLines';
 
-const CONTACT = 'mailto:hello@studiofx.co?subject=Project%20enquiry';
+const CONTACT = 'mailto:fahadrahman9819@gmail.com?subject=Project%20enquiry';
 
 /** The serif word cycles like Trionn's "Designed to mean …" */
 const CYCLE = ['miss.', 'sleep.', 'stall.', 'blink.'];

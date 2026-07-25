@@ -90,7 +90,7 @@ export default function Nav() {
           ))}
         </nav>
         <div className="menuFoot">
-          <span>hello@studiofx.co</span>
+          <span>fahadrahman9819@gmail.com</span>
           <span>BIRMINGHAM, UK</span>
         </div>
       </div>

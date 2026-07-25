@@ -8,7 +8,7 @@
 import { useEffect, useState } from 'react';
 import { tick } from '@/lib/site/audio';
 
-const CONTACT = 'mailto:hello@studiofx.co?subject=Collaboration';
+const CONTACT = 'mailto:fahadrahman9819@gmail.com?subject=Collaboration';
 const LETTERS = ['S', 'T', 'U', 'D', 'I', 'O', ' ', 'F', 'X'];
 
 export default function Footer() {
@@ -48,17 +48,16 @@ export default function Footer() {
         <span className="footerCopyright">©STUDIO FX® {new Date().getFullYear()} — BIRMINGHAM, UK</span>
         <div className="footerRail">
           <span className="footerRailLabel">BUSINESS ENQUIRY</span>
-          <a href="mailto:hello@studiofx.co" data-hover>
-            E.&nbsp;&nbsp;hello@studiofx.co
+          <a href="mailto:fahadrahman9819@gmail.com" data-hover>
+            E.&nbsp;&nbsp;fahadrahman9819@gmail.com
           </a>
         </div>
         <div className="footerRail">
           <span className="footerRailLabel">SOCIAL</span>
-          {/* TODO(studio-fx): real social URLs */}
           <a href="#" data-hover>
             LinkedIn
           </a>
-          <a href="#" data-hover>
+          <a href="https://www.instagram.com/studiofxco?igsh=cG15cXRzaXB6NjR2&utm_source=qr" target="_blank" rel="noopener noreferrer" data-hover>
             Instagram
           </a>
         </div>

@@ -7,236 +7,206 @@
 ## 1. PROJECT TOPOLOGY
 
 ```
-personalagencysite/          ← ROOT (Next.js 16, main site)
-├── app/                     ← App Router — Server Components by default
+personalagencysite/              ← REPO ROOT — this IS the Next.js app
+├── app/                         ← App Router (Next.js 16, Turbopack)
+│   ├── contact/page.tsx         ← /contact route (ContactPage component)
+│   ├── opengraph-image.tsx      ← OG image generation (satori/ImageResponse)
+│   ├── twitter-image.tsx        ← re-exports opengraph-image
+│   ├── icon.tsx                 ← favicon generation (ImageResponse)
+│   ├── layout.tsx               ← Root layout, font loading, SEO metadata
+│   ├── globals.css              ← Design system — all CSS vars + section styles
+│   └── page.tsx                 ← Home route → renders <Site />
 ├── components/
-│   ├── sections/            ← Full-screen page sections (SectionOne–SectionSeven)
-│   ├── CustomCursor.tsx     ← Dual-speed lerp cursor (dot + ring)
-│   ├── LenisProvider.tsx    ← Smooth scroll, writes to zustand store
-│   ├── SpringText.tsx       ← Per-word/char spring reveal component
-│   ├── WipeOverlay.tsx      ← GSAP wipe transition between sections
-│   ├── WireframeSphere.tsx  ← Thin wrapper (dynamic import, ssr:false)
-│   └── WireframeSphereR3F.tsx ← Actual R3F + GLSL implementation
+│   └── site/
+│       ├── Site.tsx             ← Client root: Lenis, theme-wipe, preloader
+│       ├── Nav.tsx              ← Fixed nav, scroll-aware
+│       ├── Cursor.tsx           ← Dual-speed lerp cursor (dot + ring)
+│       ├── HeroLines.tsx        ← Pluckable SVG lines on the hero
+│       ├── ContactPage.tsx      ← /contact full-page form
+│       └── sections/
+│           ├── Hero.tsx         ← Dark, chrome monogram, cycling headline
+│           ├── About.tsx        ← Dark, word-by-word scroll reveal
+│           ├── Marquee.tsx      ← Light, scrolling text belt
+│           ├── Showreel.tsx     ← Dark, 500vh sticky GLSL cinema section
+│           ├── KeyFacts.tsx     ← Light, tilted parallax stat cards
+│           ├── FoundingOffer.tsx ← Light, dimension.dev-style spec document
+│           ├── Engine.tsx       ← Light→Dark, services typography + stone monogram
+│           ├── Stories.tsx      ← Light, industry outcome carousel
+│           ├── Ribbon.tsx       ← Dark, 3D curved poster gallery
+│           └── Footer.tsx       ← Dark, animated wordmark + contact rail
 ├── lib/
-│   └── store.ts             ← Zustand global state (scroll, mouse, activeSection)
-└── studio-fx-new/           ← SEPARATE Next.js project — has its own package.json
+│   └── site/
+│       ├── seo.ts               ← SSOT for site identity, canonical URL, brand tokens
+│       ├── MonogramScene.ts     ← Three.js chrome/stone FX monogram
+│       ├── ReelScene.ts         ← GLSL3 five-chapter procedural cinema
+│       ├── RibbonScene.ts       ← Three.js curved 3D poster gallery
+│       └── audio.ts             ← Tick sound for footer interaction
+└── public/                      ← Static assets (fonts served from app/fonts/)
 ```
 
-**`studio-fx-new/` is a completely separate Next.js app.** Never import across the boundary. The root `tsconfig.json` excludes it. Run its dev server with `npm --prefix studio-fx-new run dev`, not from the root.
+**There is no `studio-fx-new/` subdirectory.** It was the project; it is now the root.
 
 ---
 
 ## 2. ANIMATION DOCTRINE (non-negotiable)
 
 ### What we use
-| Purpose | Tool | Location |
+
+| Purpose | Tool | Notes |
 |---|---|---|
-| All UI motion | `@react-spring/web` | `useSpring`, `useTrail`, `animated.*` |
-| Text reveals | `SpringText.tsx` or inline `useTrail` | Per-word default, per-char for short strings |
-| Smooth scroll | `lenis` via `LenisProvider` | Wraps entire page |
-| Section transitions | `gsap` wipe | `WipeOverlay` + `triggerWipe()` in page.tsx |
-| WebGL / 3D | `@react-three/fiber` + `@react-three/drei` | R3F Canvas, ssr:false |
-| Global state | `zustand` | `lib/store.ts` — scrollY, scrollVelocity, mouseX, mouseY |
+| All UI scroll animation | `gsap` + `ScrollTrigger` | `fromTo`, `scrub`, `once: true` |
+| Smooth scroll | `lenis` wired into GSAP ticker | `lenis.on('scroll', ScrollTrigger.update)` |
+| 3D / WebGL | Raw `three` (not R3F) | Direct renderer, rAF loop, IntersectionObserver lifecycle |
+| GLSL shaders | GLSL3 via `THREE.ShaderMaterial` | `glslVersion: THREE.GLSL3`, `out vec4 fragColor` |
+| Preloader counter | `requestAnimationFrame` in `Site.tsx` | Fires `sfx:intro` event when done |
+| CSS entrance | Keyframes only for the loader panels | No keyframes on content |
 
 ### What we never do
-- **No CSS `transition:` on animated content.** Springs only. CSS transitions fight spring physics and produce judder.
-- **No CSS `@keyframes` for entrance animations.** Use `useSpring` / `useTrail` with `delay`.
-- **No `framer-motion`.** Not installed, not needed.
-- **No `GSAP` for text or UI motion.** GSAP is reserved exclusively for the wipe transition in `WipeOverlay`.
-- **No raw `Three.js` scene setup.** Always go through R3F (`@react-three/fiber`).
 
-### Spring config reference
-```ts
-// Standard entrance (headline words)
-config: { mass: 1, tension: 200, friction: 36 }
+- **No `@react-spring/web`.** Not installed.
+- **No `framer-motion`.** Not installed.
+- **No `zustand`.** Not installed. Scroll/mouse state lives in the Three.js uniform pipeline, not a store.
+- **No `@react-three/fiber`.** Three.js is used directly.
+- **No `r3f` Canvases.** All WebGL is a raw `<canvas>` owned by a TypeScript class.
+- **No CSS `transition:` on animated content** — springs/GSAP only prevents judder.
+- **No `gl_FragColor`** in shaders — we use GLSL3, so output is `out vec4 fragColor`.
 
-// Soft entrance (body text, buttons)
-config: { mass: 1, tension: 180, friction: 40 }
+### GLSL3 conventions
 
-// Snappy (interactive feedback)
-config: { mass: 1, tension: 300, friction: 28 }
+```glsl
+precision highp float;
+out vec4 fragColor;              /* NOT gl_FragColor */
+uniform float uTime;
+uniform float uProgress;
+uniform vec2  uRes;              /* drawing-buffer pixels — NOT CSS layout pixels */
+uniform vec3  uAccent;
+
+/* 1px AA line at d==0 */
+float crisp(float d) { float w = fwidth(d) * 1.2; return smoothstep(w, 0.0, abs(d)); }
 ```
 
-### Spring text pattern
-```tsx
-// Correct — spring trail per word
-const trail = useTrail(words.length, {
-  y: active ? 0 : 110,
-  opacity: active ? 1 : 0,
-  config: { mass: 1, tension: 200, friction: 36 },
-  delay: active ? 80 : 0,
-});
-
-// Correct — clip trick in CSS
-// .char-wrap { overflow: hidden }  ← hides the travel distance
-// .char { will-change: transform, opacity }
-```
+`uRes` must be set via `renderer.getDrawingBufferSize()` — never `canvas.width/height`.
 
 ---
 
 ## 3. COMPONENT ARCHITECTURE
 
-### Server-first
-Default to Server Components. Add `"use client"` only at the lowest possible leaf that needs browser APIs, event handlers, or hooks.
+### Client boundary
 
-### Section pattern
-Every section receives `isActive: boolean` and derives its animation trigger from it:
-```tsx
-useEffect(() => {
-  if (isActive) {
-    const t = setTimeout(() => setTriggered(true), 60);
-    return () => clearTimeout(t);
-  }
-  setTriggered(false);  // reset when section leaves — allows re-entry animation
-}, [isActive]);
-```
-**Do not remove the reset.** The wipe transition replays sections, so resetting on exit is intentional.
+`'use client'` goes on the lowest leaf that needs browser APIs or hooks. All section
+components are client because they use GSAP + `useRef`. `layout.tsx`, `page.tsx`, and
+`app/contact/page.tsx` are Server Components.
 
-### WebGL components
-Always wrap R3F Canvases in a thin `dynamic(() => import('./...'), { ssr: false })` shell component. The shell is importable anywhere; the R3F code never runs on the server.
+### Three.js scene lifecycle pattern
 
-```tsx
-// WireframeSphere.tsx (shell — importable from Server Components)
-export default function WireframeSphere({ isActive }: Props) {
-  const R3F = dynamic(() => import('./WireframeSphereR3F'), { ssr: false });
-  return <R3F isActive={isActive} />;
+Every scene lives in a class (`MonogramScene`, `ReelScene`, `RibbonScene`) with:
+- `start()` / `stop()` driven by `IntersectionObserver` — never runs off-screen
+- `dispose()` called on component unmount (geometry, material, renderer)
+- `resize()` wired to `window.resize` inside the class, removed in `dispose()`
+
+### Theme wipe system
+
+`data-theme-section="dark|light"` on each `<section>`. `Site.tsx` creates a
+`ScrollTrigger` per section that toggles `document.documentElement.dataset.theme`
+as the section crosses 52% of the viewport. The `body` CSS transition handles the
+background/color crossfade. No JS color interpolation needed.
+
+---
+
+## 4. SEO & METADATA
+
+Single source of truth: `lib/site/seo.ts` exports `SITE` (identity tokens) and `BRAND`
+(design tokens mirrored from `:root` CSS vars).
+
+- URL resolution: `NEXT_PUBLIC_SITE_URL` → `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_URL` → localhost
+- OG/twitter images: `app/opengraph-image.tsx` (satori `ImageResponse`). Font loading is
+  network-optional — if Google Fonts fetch fails, satori renders with system font rather
+  than crashing. The `fonts` option is only passed when at least one font loaded.
+- Structured data: `Organization` JSON-LD injected in `layout.tsx` body.
+
+---
+
+## 5. CONTACT
+
+- **Form:** `components/site/ContactPage.tsx` — client-side only for now. No backend wired.
+- **Email:** `fahadrahman9819@gmail.com` is the live contact address. No `hello@studiofx.co` anywhere.
+- **CTA links:** All `mailto:` hrefs across sections point to `fahadrahman9819@gmail.com`.
+
+---
+
+## 6. DESIGN SYSTEM
+
+Defined entirely in `app/globals.css`. Key tokens:
+
+```css
+:root {
+  --accent:    #ff5a26;
+  --bg:        #040508;       /* dark default */
+  --ink:       #e9ecf3;
+  --ink-dim:   rgba(233,236,243,0.6);
+  --ink-faint: rgba(233,236,243,0.34);
+  --hairline:  rgba(233,236,243,0.16);
+  --card:      #0c0d12;
+}
+html[data-theme='light'] {
+  --bg:        #e8e6e1;
+  --ink:       #0b0c10;
+  --ink-dim:   rgba(11,12,16,0.62);
+  --ink-faint: rgba(11,12,16,0.38);
+  --hairline:  rgba(11,12,16,0.16);
+  --card:      #f4f2ee;
 }
 ```
 
-### Zustand store
-The store is the single wire between Lenis, the cursor, and WebGL uniforms. Never read `window.scrollY` directly in a component — read `useAppStore((s) => s.scrollY)`.
-
-```ts
-// Reading in R3F (inside useFrame)
-const mouseX = useAppStore((s) => s.mouseX);  // ✓
-
-// Reading outside R3F
-const velocity = useAppStore.getState().scrollVelocity;  // ✓ (non-reactive, fine in rAF)
-```
+Fonts (CSS variables set by `next/font`):
+- `--font-display` → Familjen Grotesk (Google)
+- `--font-mono`    → Martian Mono (Google)
+- `--font-body`    → Switzer (local, Fontshare)
+- `--font-serif`   → Zodiak italic (local, Fontshare)
 
 ---
 
-## 4. GLSL SHADER CONVENTIONS
+## 7. CURSOR
 
-Feed all runtime values as uniforms — never bake them in:
-
-```glsl
-uniform float uTime;           // clock.getElapsedTime()
-uniform float uMouseX;         // 0–1, normalised viewport
-uniform float uMouseY;         // 0–1, normalised viewport
-uniform float uScrollVelocity; // from lenis, lerped in useFrame
-```
-
-Always lerp uniforms inside `useFrame` to prevent jitter:
-```ts
-uniforms.uMouseX.value = THREE.MathUtils.lerp(uniforms.uMouseX.value, mouseX, 0.05);
-```
-
-Use `THREE.AdditiveBlending` + `depthWrite: false` on all particle systems.
-
----
-
-## 5. CURSOR
-
-The cursor has **two elements** — never collapse them to one:
+Two elements — never collapse:
 
 | Element | Lerp | Role |
 |---|---|---|
-| `#cursor-dot` (6px solid) | `0.22` — fast | Precise pointer |
-| `#cursor-ring` (36px border) | `0.09` — slow | Trailing emphasis, hover state |
+| `.cursorDot` (6px) | 0.22 — fast | Precise pointer |
+| `.cursorRing` (36px border) | 0.09 — slow | Trailing emphasis |
 
-On hover (`a, button, [data-hover]`): ring scales to `1.8×`, applies `mix-blend-mode: difference`.
-
-Colour is section-aware — see `DOT_COLORS` / `RING_COLORS` arrays in `CustomCursor.tsx`. Update those arrays if sections are added or reordered.
-
-**Never use CSS `cursor: none` on individual elements.** It's set globally via `html.custom-cursor-active *` in `globals.css`.
+On `[data-hover]` elements: ring scales to `1.8×`, applies `mix-blend-mode: difference`.
+`data-cursor-label="TEXT"` on links renders a text label inside the ring.
+`html.hasCursor` class activates `cursor: none` globally via CSS.
 
 ---
 
-## 6. FILM GRAIN
-
-The grain is a `#grain` div in the DOM with a fixed inset of `-50%` / `200%` and `animation: grain-shift 0.45s steps(1) infinite`. It is placed in `page.tsx` above all content and sits at `z-index: 9990`.
-
-- **Opacity is `0.04`.** Do not raise it — it becomes a readability issue on light sections.
-- **Do not replace with a canvas grain.** The SVG `feTurbulence` approach has zero JS cost.
-- The grain div is in `page.tsx`, not in `layout.tsx`, because light-section pages should still show grain without it affecting future routes that might have a different aesthetic.
-
----
-
-## 7. SECTION NAVIGATION
-
-The site renders all 7 sections as `position: absolute` overlays inside a `position: fixed` viewport container. Scroll position on the `700vh` tall page ghost determines which section is active. The GSAP wipe (`triggerWipe`) fires on every section change.
-
-**Never convert this to a traditional scroll layout.** The fixed-overlay + wipe pattern is the core design decision. If you need scroll within a section, implement it inside that section's container with `overflow-y: auto`.
-
-Section index order:
-```
-0 — SectionOne   (#f0eeec light)
-1 — SectionTwo   (#E8350A red)
-2 — SectionThree (#ffffff white)
-3 — SectionFour  (#0a0a0a dark, WireframeSphere)
-4 — SectionFive  (#0a0a0a dark, panel carousel)
-5 — SectionSix   (#080808 dark, CTA)
-6 — SectionSeven (#f0eeec light, contact + form)
-```
-
-DOT_COLORS and RING_COLORS in `CustomCursor.tsx` mirror this order. Keep them in sync.
-
----
-
-## 8. TYPOGRAPHY
-
-Three fonts loaded in `page.tsx` (not layout — kept close to usage):
-
-| Variable | Font | Usage |
-|---|---|---|
-| `anton.className` | Anton 400 | Hero headlines, large display type |
-| `spaceGrotesk.className` | Space Grotesk 300/400/500/700 | UI, nav, body copy |
-| `dmSans.className` | DM Sans 400/500/600/700 | Secondary body, metadata |
-
-All strings live in `components/sections/site-copy.ts`. **Never hardcode brand name, email, or CTA copy in component files.** Import from `site-copy.ts`.
-
----
-
-## 9. CONTACT FORM
-
-- **Endpoint:** `app/api/contact/route.ts`
-- **Transport:** Gmail SMTP via nodemailer (env vars: `GMAIL_USER`, `GMAIL_APP_PASSWORD`)
-- **Client:** `SectionSeven.tsx` posts `{ name, email, service, message }` to `/api/contact`
-- The form renders via `createPortal` into `document.body` — this is intentional to escape the fixed viewport stacking context
-
-Do not add client-side email validation beyond `required` and `type="email"`. The API validates server-side.
-
----
-
-## 10. BUILD RULES
+## 8. BUILD RULES
 
 ```bash
-# Main site
-npm run build          # must pass with zero errors before any commit
-
-# studio-fx-new (separate project)
-npm --prefix studio-fx-new run build
+npm run build          # must pass with zero TS errors before any commit
+npm run dev            # Turbopack dev server — fast HMR
 ```
 
-- TypeScript strict mode is on. No `any` types, no `@ts-ignore` unless the comment explains exactly why.
-- `@ts-expect-error` is only acceptable when the error genuinely cannot be fixed (dynamic JSX tag typing). Add a comment.
-- The root `tsconfig.json` excludes `studio-fx-new/`. Do not remove that exclusion.
+- TypeScript strict mode. No `any`. No `@ts-ignore` without an explanation comment.
+- Zero TODO/FIXME comments in committed code. If something is deferred, track it
+  outside the codebase (this document, or a separate brief).
+- OG image font loading is network-optional by design — never call `process.exit` or
+  throw from a route segment.
 
 ---
 
-## 11. GIT
+## 9. GIT
 
-Active development branch: `claude/peaceful-mccarthy-7jwihs`
+Working branch for active development: `fix-vercel-root` (tracks `main`).
 
-Commit message format:
 ```
 feat(scope): short imperative description
 
-- Bullet explaining the why, not the what
+- Why, not what
 - Second bullet if needed
 
 Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
 ```
 
-Push after every meaningful change. This is a remote cloud environment — uncommitted work is lost when the session ends.
+Push after every meaningful change. Remote is the source of truth.

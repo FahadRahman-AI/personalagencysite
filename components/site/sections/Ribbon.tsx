@@ -75,7 +75,7 @@ export default function Ribbon() {
           of our build practice.
         </p>
         <a
-          href="mailto:hello@studiofx.co?subject=Show%20me%20more"
+          href="mailto:fahadrahman9819@gmail.com?subject=Show%20me%20more"
           className="monoCta ribbonLink"
           data-hover
         >

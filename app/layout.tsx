@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Familjen_Grotesk, Martian_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { SITE } from "@/lib/site/seo";
 import "./globals.css";
 
 /* Display — warm grotesk for headlines (Trionn's actual H1 face, open source) */
@@ -37,13 +38,85 @@ const zodiak = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Studio FX® — AI Infrastructure Studio",
-  description:
-    "Studio FX is an AI infrastructure studio building lead engines, workflow systems and intelligent websites — built for clarity, speed and scale.",
+  metadataBase: new URL(SITE.url),
+  title: {
+    default: "Studio FX® — AI Infrastructure Studio",
+    template: "%s · Studio FX®",
+  },
+  description: SITE.description,
+  applicationName: SITE.name,
+  authors: [{ name: SITE.legalName }],
+  creator: SITE.legalName,
+  publisher: SITE.legalName,
+  category: "technology",
+  keywords: [
+    "AI infrastructure",
+    "lead engine",
+    "AI automation studio",
+    "workflow systems",
+    "intelligent websites",
+    "AI product studio",
+    "Studio FX",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE.name,
+    title: "Studio FX® — AI Infrastructure Studio",
+    description: SITE.description,
+    url: SITE.url,
+    locale: SITE.locale,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Studio FX® — AI Infrastructure Studio",
+    description: SITE.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#040508",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#040508" },
+    { media: "(prefers-color-scheme: light)", color: "#e8e6e1" },
+  ],
+  colorScheme: "dark light",
+};
+
+/**
+ * Organization structured data — lets search + AI crawlers resolve the
+ * studio as a real entity (name, service, contact, social) rather than
+ * an anonymous page. Injected once at the document root.
+ */
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: SITE.name,
+  legalName: SITE.legalName,
+  description: SITE.description,
+  url: SITE.url,
+  email: SITE.email,
+  foundingDate: SITE.founded,
+  image: `${SITE.url}/opengraph-image`,
+  logo: `${SITE.url}/icon`,
+  sameAs: [SITE.instagram],
+  areaServed: "Worldwide",
+  knowsAbout: [
+    "Artificial Intelligence",
+    "Lead generation systems",
+    "Workflow automation",
+    "Web development",
+  ],
 };
 
 export default function RootLayout({
@@ -57,7 +130,14 @@ export default function RootLayout({
       data-theme="dark"
       className={`${familjen.variable} ${martian.variable} ${switzer.variable} ${zodiak.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          // Structured data is trusted, static, server-rendered — no user input.
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
