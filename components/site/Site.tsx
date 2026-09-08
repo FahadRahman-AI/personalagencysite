@@ -40,7 +40,7 @@ export default function Site() {
     let tickerFn: ((t: number) => void) | null = null;
 
     if (!reduced) {
-      lenis = new Lenis({ lerp: 0.105, smoothWheel: true });
+      lenis = new Lenis({ duration: 1.2, smoothWheel: true });
       lenis.on('scroll', ScrollTrigger.update);
       tickerFn = (time: number) => lenis!.raf(time * 1000);
       gsap.ticker.add(tickerFn);

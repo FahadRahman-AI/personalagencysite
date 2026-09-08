@@ -116,6 +116,8 @@ export class MonogramScene {
   private variant: MonogramVariant;
   private disposables: { dispose(): void }[] = [];
   private canvas: HTMLCanvasElement;
+  /** When non-null, scroll progress (0–1) drives rotation instead of time. */
+  private scrollProgress: number | null = null;
 
   private onPointer = (e: PointerEvent) => {
     this.pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
@@ -239,6 +241,14 @@ export class MonogramScene {
     }
   }
 
+  /**
+   * Drive rotation from scroll progress (0–1) instead of the time-based idle.
+   * Pass null to return to time-driven animation.
+   */
+  setScrollOverride(progress: number | null) {
+    this.scrollProgress = progress;
+  }
+
   /** Play the scale/settle intro (call when preloader clears). */
   intro() {
     this.introAt = this.clock.getElapsedTime();
@@ -287,7 +297,12 @@ export class MonogramScene {
       introLift = -1.1;
     }
 
-    if (this.variant === 'chrome') {
+    if (this.scrollProgress !== null) {
+      // Scroll-scrubbed: full 2π rotation across the pinned track + pointer tilt
+      const p = this.scrollProgress;
+      this.group.rotation.y = p * Math.PI * 2 - Math.PI + this.pointer.x * 0.22;
+      this.group.rotation.x = Math.sin(p * Math.PI) * 0.3 - this.pointer.y * 0.16;
+    } else if (this.variant === 'chrome') {
       this.group.rotation.y = Math.sin(t * 0.3) * 0.4 + this.pointer.x * 0.38;
       this.group.rotation.x = Math.sin(t * 0.22) * 0.07 - this.pointer.y * 0.26;
     } else {
