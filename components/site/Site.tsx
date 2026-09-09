@@ -20,6 +20,7 @@ import Marquee from './sections/Marquee';
 import Showreel from './sections/Showreel';
 import KeyFacts from './sections/KeyFacts';
 import FoundingOffer from './sections/FoundingOffer';
+import ParticleShowcase from './sections/ParticleShowcase';
 import Engine from './sections/Engine';
 import Stories from './sections/Stories';
 import Ribbon from './sections/Ribbon';
@@ -135,6 +136,7 @@ export default function Site() {
         <About />
         <Marquee />
         <Showreel />
+        <ParticleShowcase />
         <KeyFacts />
         <FoundingOffer />
         <Engine />

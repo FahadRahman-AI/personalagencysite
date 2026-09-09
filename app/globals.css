@@ -522,6 +522,58 @@ html.hasCursor button {
   color: var(--accent);
 }
 
+/* HUD metrics bar ---------------------------------------------------- */
+.heroHud {
+  position: absolute;
+  bottom: clamp(24px, 4.6vh, 42px);
+  left: clamp(24px, 4.5vw, 64px);
+  right: clamp(20px, 3.6vw, 48px);
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  opacity: 0;
+  transition: opacity 1s ease 2.3s;
+  pointer-events: none;
+}
+
+.in .heroHud { opacity: 1; }
+
+.heroHudLeft {
+  display: flex;
+  gap: 28px;
+}
+
+.heroHudStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heroHudValue {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 0.04em;
+}
+
+.heroHudLabel {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.36);
+}
+
+.heroHudRight {
+  display: flex;
+  gap: 20px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.3);
+}
+
 .heroScroll {
   position: absolute;
   bottom: clamp(24px, 4.6vh, 42px);
@@ -547,6 +599,189 @@ html.hasCursor button {
 @keyframes dip {
   0%, 100% { transform: translateY(-3px); }
   50% { transform: translateY(3px); }
+}
+
+/* ---------- ParticleShowcase --------------------------------------- */
+
+.psTrack {
+  position: relative;
+  height: 300vh;
+  background: #020203;
+}
+
+.psSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.psCanvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* Radial vignette — ensures text legibility over the purple glow */
+.psVignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 50%, transparent 30%, rgba(2,2,3,0.82) 100%),
+    linear-gradient(to bottom, rgba(2,2,3,0.55) 0%, transparent 30%, transparent 70%, rgba(2,2,3,0.72) 100%);
+}
+
+.psInner {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(28px, 5vh, 56px) clamp(24px, 5vw, 72px);
+  pointer-events: none;
+}
+
+.psHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.psKicker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: rgba(217, 70, 239, 0.8);
+}
+
+.psGrid {
+  display: grid;
+  grid-template-columns: 1px 1fr 1fr;
+  gap: 0 clamp(28px, 4vw, 56px);
+  align-items: start;
+}
+
+.psDivider {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--hairline);
+  margin-bottom: clamp(28px, 4vh, 48px);
+  transform-origin: left;
+}
+
+.psPanel {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.4vh, 24px);
+}
+
+/* Re-use the grid: divider spans all cols, panels are col 2 and 3 */
+.psGrid > .psDivider { grid-column: 1 / -1; grid-row: 1; }
+.psGrid > .psPanel:nth-child(2) { grid-column: 1; }
+.psGrid > .psPanel:nth-child(3) { grid-column: 2; }
+
+.psGrid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.psMeta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.psIndex {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: rgba(217, 70, 239, 0.9);
+}
+
+.psTag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+  padding: 3px 8px;
+  border: 1px solid rgba(217, 70, 239, 0.22);
+  border-radius: 2px;
+}
+
+.psTitle {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(38px, 5.2vw, 82px);
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.psTitleMask {
+  display: block;
+  overflow: hidden;
+}
+
+.psTitleLine {
+  display: block;
+}
+
+.psSub2 {
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(13px, 1.1vw, 15px);
+  line-height: 1.65;
+  color: var(--ink-dim);
+  max-width: 38ch;
+}
+
+.psBullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.psBullet {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-body);
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 300;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+.psBulletDot {
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(217, 70, 239, 0.8);
+  box-shadow: 0 0 6px rgba(217, 70, 239, 0.5);
+}
+
+.psCta {
+  margin-top: 4px;
+  align-self: flex-start;
+  color: rgba(255, 255, 255, 0.82);
+  border-color: rgba(255, 255, 255, 0.28);
+  pointer-events: auto;
+}
+
+.psCta:hover {
+  color: rgba(217, 70, 239, 1);
+  border-color: rgba(217, 70, 239, 0.8);
+}
+
+.psSub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
 }
 
 /* ---------- Showreel (subdivision-style cinema beat) ---------------- */
